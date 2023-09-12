@@ -54,8 +54,19 @@ import java.util.regex.Pattern;
 public class MajorTokenStream {
     private static final String regex = "(\\t|\\n|\\r| |\\!|\\\"|%0A|%20|%21|%2520|%2526|%26|%28|%29|%2B|%2C|%3A|%3B|%3D|%5B|%5D|%7C|&|\\'|\\(|\\)|\\*|\\+|,|--|;|<|>|\\?|\\[|\\]|\\{|\\||\\})";
     private static final Pattern compiledRegex = Pattern.compile(regex);
+    private final String input;
+    private final Set<String> tokens;
 
-    public static Set<String> split(String input) throws IOException {
+    public MajorTokenStream(String input) throws IOException {
+        this.input = input;
+        this.tokens = split();
+    }
+
+    public Set<String> getTokenSet() {
+        return tokens;
+    }
+
+    private Set<String> split() throws IOException {
 
         final Set<String> resultSet = new HashSet<>();
         final StringReader reader = new StringReader(input);
@@ -103,7 +114,9 @@ public class MajorTokenStream {
 
         return resultSet;
     }
-    private static boolean match(String value) {
+
+
+    private boolean match(String value) {
         return String.valueOf(value).matches(compiledRegex.pattern());
     }
 }

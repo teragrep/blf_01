@@ -46,35 +46,28 @@
 
 package com.teragrep.blf_01.tokenizer;
 
-import org.junit.jupiter.api.Test;
+import java.util.regex.Pattern;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+public class Token implements Comparable<Token>{
+    private static final String regex = "(#|\\$|%|-|\\.|/|:|=|@|\\\\|_)";
+    private static final Pattern compiledRegex = Pattern.compile(regex);
+    private final String value;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class MajorTokenStreamTest {
-
-    @Test
-    public void simpleMajorTokenStreamTest() throws IOException {
-        Set<String> tokenSet = new MajorTokenStream("1%20b.c.d.e%202").getTokenSet();
-        Set<String> expectedSet = new HashSet<>(Arrays.asList("1","%20","b.c.d.e","2"));
-        assertTrue(tokenSet.containsAll(expectedSet));
+    public Token(String value) {
+        this.value = value;
     }
 
-    @Test
-    public void doubleHyphenTest() throws IOException {
-        Set<String> tokenSet = new MajorTokenStream("-one--two---three-").getTokenSet();
-        Set<String> expectedSet = new HashSet<>(Arrays.asList("--","-one","two","-three-"));
-        assertTrue(tokenSet.containsAll(expectedSet));
+    private String[] getMinorTokens() {
+        // TODO add permutations
+        return compiledRegex.split(value);
     }
 
-    @Test
-    public void urlEncodingTest() throws IOException {
-        Set<String> tokenSet = new MajorTokenStream("html%20with%1234.%252010").getTokenSet();
-        Set<String> expectedSet = new HashSet<>(Arrays.asList("html","%20","with%1234.","%2520","10"));
-        assertTrue(tokenSet.containsAll(expectedSet));
+    @Override
+    public int compareTo(Token other) {
+        return other.value.compareTo(this.value);
     }
-}
+    @Override
+    public String toString() {
+        return "Major Token: " + value;
+    }
+ }
