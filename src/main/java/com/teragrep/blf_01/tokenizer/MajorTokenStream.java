@@ -117,6 +117,6 @@ public class MajorTokenStream {
 
 
     private boolean match(String value) {
-        return String.valueOf(value).matches(compiledRegex.pattern());
+        return value.matches(compiledRegex.pattern());
     }
 }

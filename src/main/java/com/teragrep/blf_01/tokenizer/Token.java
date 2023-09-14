@@ -46,28 +46,54 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-public class Token implements Comparable<Token>{
+public class Token {
     private static final String regex = "(#|\\$|%|-|\\.|/|:|=|@|\\\\|_)";
     private static final Pattern compiledRegex = Pattern.compile(regex);
-    private final String value;
+    private final Set<String> minorTokens = new HashSet<>();
 
     public Token(String value) {
-        this.value = value;
+
+        int splitIndex = 0;
+        for (int i = 0; i < value.length(); i++) {
+            if (match(value.charAt(i))) {
+                if (splitIndex == 0) {
+                    addMinorTokensFromIndex(value, splitIndex);
+                }
+                splitIndex = i;
+
+                // add with splitter
+                addMinorTokensFromIndex(value, splitIndex);
+                // add without splitter
+                addMinorTokensFromIndex(value, splitIndex+1);
+            }
+
+        }
     }
 
-    private String[] getMinorTokens() {
-        // TODO add permutations
-        return compiledRegex.split(value);
+    private void addMinorTokensFromIndex(String value, int index) {
+        String subString = value.substring(index);
+
+        if (!subString.equals(value)) {
+            minorTokens.add(subString);
+        }
+
+        for(int i = subString.length()-1; i > 0; i--) {
+            if (match(subString.charAt(i))) {
+                minorTokens.add(subString.substring(0,i));
+                minorTokens.add(subString.substring(0,i+1));
+            }
+        }
     }
 
-    @Override
-    public int compareTo(Token other) {
-        return other.value.compareTo(this.value);
+    public Set<String> getMinorTokens() {
+        return minorTokens;
     }
-    @Override
-    public String toString() {
-        return "Major Token: " + value;
+
+    private static boolean match(char ch) {
+        return String.valueOf(ch).matches(compiledRegex.pattern());
     }
  }
