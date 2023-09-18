@@ -54,43 +54,68 @@ public class Token {
     private static final String regex = "(#|\\$|%|-|\\.|/|:|=|@|\\\\|_)";
     private static final Pattern compiledRegex = Pattern.compile(regex);
     private final Set<String> minorTokens = new HashSet<>();
+    private final String value;
 
     public Token(String value) {
+        this.value = value;
 
         int splitIndex = 0;
         for (int i = 0; i < value.length(); i++) {
             if (match(value.charAt(i))) {
-                if (splitIndex == 0) {
-                    addMinorTokensFromIndex(value, splitIndex);
+                if (i == 0) {
+                    addToken(this.value.charAt(i));
                 }
+                if (i == value.length()-1) {
+                    addToken(this.value.charAt(i));
+                }
+                if (splitIndex == 0) {
+                    addMinorTokensFromIndex(splitIndex);
+                }
+
                 splitIndex = i;
 
-                // add with splitter
-                addMinorTokensFromIndex(value, splitIndex);
-                // add without splitter
-                addMinorTokensFromIndex(value, splitIndex+1);
-            }
+                // TODO combine these maybe
 
+                // add with splitter
+                addMinorTokensFromIndex(splitIndex);
+                // add without splitter
+                addMinorTokensFromIndex(splitIndex+1);
+            }
         }
     }
 
-    private void addMinorTokensFromIndex(String value, int index) {
+    private void addMinorTokensFromIndex(int index) {
         String subString = value.substring(index);
 
+        if(subString.isEmpty() || subString.equals(" ")) {
+            return;
+        }
+        // Add substring
         if (!subString.equals(value)) {
-            minorTokens.add(subString);
+            addToken(subString);
         }
 
         for(int i = subString.length()-1; i > 0; i--) {
             if (match(subString.charAt(i))) {
-                minorTokens.add(subString.substring(0,i));
-                minorTokens.add(subString.substring(0,i+1));
+                addToken(subString.substring(0,i));
+                addToken(subString.substring(0,i+1));
             }
         }
     }
 
     public Set<String> getMinorTokens() {
         return minorTokens;
+    }
+
+    private void addToken(char c) {
+        if (!String.valueOf(c).equals(value)) {
+            minorTokens.add(String.valueOf(c));
+        }
+    }
+    private void addToken(String s) {
+        if (!s.equals(value)) {
+            minorTokens.add(s);
+        }
     }
 
     private static boolean match(char ch) {

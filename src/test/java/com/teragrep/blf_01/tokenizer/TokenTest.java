@@ -69,6 +69,14 @@ public class TokenTest {
         assertEquals(expectedSet.size(), set.size());
 
     }
+
+    @Test
+    public void noSplitterTest() {
+        final Token token = new Token("abcdefghijklmn");
+        final Set<String> set = token.getMinorTokens();
+
+        assertEquals(0, set.size());
+    }
     @Test
     public void multipleSplitTest() {
         final Token token = new Token("b.c.d.e");
