@@ -48,6 +48,7 @@ package com.teragrep.blf_01.tokenizer;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class Token {
@@ -55,32 +56,35 @@ public class Token {
     private static final Pattern compiledRegex = Pattern.compile(regex);
     private final Set<String> minorTokens = new HashSet<>();
     private final String value;
+    private final TreeSet<Integer> indexes = new TreeSet<>();
+    private final Set<Integer> reversedIndexes;
 
     public Token(String value) {
         this.value = value;
 
-        int splitIndex = 0;
+        // Find splitter indexes
         for (int i = 0; i < value.length(); i++) {
             if (match(value.charAt(i))) {
-                if (i == 0) {
-                    addToken(this.value.charAt(i));
-                }
-                if (i == value.length()-1) {
-                    addToken(this.value.charAt(i));
-                }
-                if (splitIndex == 0) {
-                    addMinorTokensFromIndex(splitIndex);
-                }
-
-                splitIndex = i;
-
-                // TODO combine these maybe
-
-                // add with splitter
-                addMinorTokensFromIndex(splitIndex);
-                // add without splitter
-                addMinorTokensFromIndex(splitIndex+1);
+                indexes.add(i);
             }
+        }
+
+        this.reversedIndexes = indexes.descendingSet();
+
+        addMinorTokensFromIndex(0);
+
+        for(int i: indexes) {
+            if (i == 0) {
+                addToken(this.value.charAt(i));
+            }
+            if (i == value.length()-1) {
+                addToken(this.value.charAt(i));
+            }
+
+            // add with splitter
+            addMinorTokensFromIndex(i);
+            // add without splitter
+            addMinorTokensFromIndex(i+1);
         }
     }
 
@@ -90,16 +94,18 @@ public class Token {
         if(subString.isEmpty() || subString.equals(" ")) {
             return;
         }
+
         // Add substring
         if (!subString.equals(value)) {
             addToken(subString);
         }
 
-        for(int i = subString.length()-1; i > 0; i--) {
-            if (match(subString.charAt(i))) {
-                addToken(subString.substring(0,i));
-                addToken(subString.substring(0,i+1));
+        for (int i : reversedIndexes) {
+            if (i <= index) {
+                break;
             }
+            addToken(value.substring(index,i));
+            addToken(value.substring(index,i+1));
         }
     }
 
