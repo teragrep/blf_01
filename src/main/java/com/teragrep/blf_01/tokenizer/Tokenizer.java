@@ -1,5 +1,3 @@
-package com.teragrep.blf_01.tokenizer;
-
 /*
  * Teragrep Bloom Filter Library BLF-01
  * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
@@ -46,20 +44,15 @@ package com.teragrep.blf_01.tokenizer;
  * a licensee so wish it.
  */
 
-import java.util.Arrays;
-import java.util.HashSet;
+package com.teragrep.blf_01.tokenizer;
+
+import java.util.Set;
 
 public final class Tokenizer {
 
-    public static HashSet<String> tokenize(String input) {
-        String[] tokens = TokenSplit.split(input);
+    public static Set<String> tokenize(String input) {
+        MajorTokenStream mts = new MajorTokenStream(input);
 
-        HashSet<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
-
-        for (String token : tokens) {
-            tokenSet.addAll(Arrays.asList(SubTokenSplit.split(token)));
-        }
-
-        return tokenSet;
+        return mts.getTokenSetWithMinorTokens();
     }
 }

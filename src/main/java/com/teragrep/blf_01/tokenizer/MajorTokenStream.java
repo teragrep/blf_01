@@ -50,67 +50,93 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 public class MajorTokenStream {
     private static final String regex = "(\\t|\\n|\\r| |\\!|\\\"|%0A|%20|%21|%2520|%2526|%26|%28|%29|%2B|%2C|%3A|%3B|%3D|%5B|%5D|%7C|&|\\'|\\(|\\)|\\*|\\+|,|--|;|<|>|\\?|\\[|\\]|\\{|\\||\\})";
     private static final Pattern compiledRegex = Pattern.compile(regex);
     private final String input;
-    private final Set<String> tokens;
+    private final Set<Token> tokens;
 
-    public MajorTokenStream(String input) throws IOException {
+    public MajorTokenStream(String input) {
         this.input = input;
-        this.tokens = split();
+        this.tokens = collectMajorTokens();
     }
 
     public Set<String> getTokenSet() {
-        return tokens;
+        return tokens.stream().map(Token::getValue).collect(Collectors.toSet());
     }
 
-    private Set<String> split() throws IOException {
+    public Set<String> getTokenSetWithMinorTokens() {
+        Set<String> returnSet = new HashSet<>();
+        for(Token t : tokens) {
+            returnSet.add(t.getValue());
+            returnSet.addAll(t.getMinorTokens());
+        }
+        return returnSet;
+    }
 
-        final Set<String> resultSet = new HashSet<>();
+    private Set<Token> collectMajorTokens() {
+
+        final Set<Token> resultSet = new HashSet<>();
         final StringReader reader = new StringReader(input);
         final StringBuilder builder = new StringBuilder();
         final StringBuilder overlap = new StringBuilder();
 
-        while (true) {
-            int ascii = reader.read();
-            if (ascii < 0) {
-                resultSet.add(builder.toString());
-                break;
-            }
-            char ch = (char) ascii;
-            builder.append(ch);
+        try {
+            while (true) {
+                int ascii = reader.read();
+                if (ascii < 0) {
+                    if (builder.length() > 0) {
+                        resultSet.add(new Token(builder.toString()));
+                    }
+                    break;
+                }
+                char ch = (char) ascii;
+                builder.append(ch);
 
-            // Handle multiple character regex
-            if (ascii == 37 || ascii == 45) {
-                reader.mark(5);
-                overlap.append(ch);
-                for (int i = 1; i <= 5; i++) {
-                    char overlapChar = (char) reader.read();
-                    overlap.append(overlapChar);
+                // Handle multi-character regex %0000 or --
+                if (ascii == 37 || ascii == 45) {
+                    reader.mark(5);
+                    overlap.append(ch);
+                    for (int i = 1; i <= 5; i++) {
+                        char overlapChar = (char) reader.read();
+                        overlap.append(overlapChar);
 
-                    if (match(overlap.toString())) {
-                        resultSet.add(overlap.toString());
-                        resultSet.add(builder.deleteCharAt(builder.length() - 1).toString());
-                        builder.setLength(0);
-                        overlap.setLength(0);
-                        reader.reset();
-                        reader.skip(i);
-                        break;
-                    } else if (i == 5) {
-                        overlap.setLength(0);
-                        reader.reset();
+                        if (match(overlap.toString())) {
+                            resultSet.add(new Token(overlap.toString()));
+                            resultSet.add(new Token(builder.deleteCharAt(builder.length() - 1).toString()));
+                            builder.setLength(0);
+                            overlap.setLength(0);
+                            reader.reset();
+                            reader.skip(i);
+                            break;
+                        } else if (i == 5) {
+                            overlap.setLength(0);
+                            reader.reset();
+                        }
                     }
                 }
-            }
 
-            if (match(String.valueOf(ch))) {
-                resultSet.add(builder.toString());
-                builder.setLength(0);
+                if (match(String.valueOf(ch))) {
+                    if (builder.length() > 1) {
+                        String splitter = builder.substring(builder.length()-1);
+                        String trimmed = builder.substring(0, builder.length()-1);
+                        resultSet.add(new Token(splitter));
+                        resultSet.add(new Token(trimmed));
+
+                    } else {
+                        resultSet.add(new Token(builder.toString()));
+                    }
+                    builder.setLength(0);
+                }
             }
+            reader.close();
+
+        } catch (IOException e) {
+            System.out.println("Exception in reading input");
         }
-        reader.close();
 
         return resultSet;
     }

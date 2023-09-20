@@ -48,31 +48,90 @@ package com.teragrep.blf_01.tokenizer;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MajorTokenStreamTest {
 
     @Test
-    public void simpleMajorTokenStreamTest() throws IOException {
+    public void simpleMajorTokenStreamTest() {
         Set<String> tokenSet = new MajorTokenStream("1%20b.c.d.e%202").getTokenSet();
         Set<String> expectedSet = new HashSet<>(Arrays.asList("1","%20","b.c.d.e","2"));
         assertTrue(tokenSet.containsAll(expectedSet));
     }
 
     @Test
-    public void doubleHyphenTest() throws IOException {
+    public void simpleMinorTokenStreamTest() {
+        Set<String> tokenSet = new MajorTokenStream("1%20b.c.d.e%202").getTokenSetWithMinorTokens();
+        Set<String> expectedSet = new HashSet<>();
+
+        // Major
+        expectedSet.add("1");
+        expectedSet.add("%20");
+        expectedSet.add("b.c.d.e");
+        expectedSet.add("2");
+        // Minor
+        expectedSet.add("%");
+        expectedSet.add("20");
+        expectedSet.add("b.c.d.");
+        expectedSet.add("b.c.d");
+        expectedSet.add("b.c.");
+        expectedSet.add("b.c");
+        expectedSet.add("b.");
+        expectedSet.add("b");
+        expectedSet.add(".c.d.e");
+        expectedSet.add(".c.d.");
+        expectedSet.add(".c.d");
+        expectedSet.add(".c.");
+        expectedSet.add(".c");
+        expectedSet.add("c.d.e");
+        expectedSet.add("c.d.");
+        expectedSet.add("c.d");
+        expectedSet.add("c.");
+        expectedSet.add("c");
+        expectedSet.add(".d.e");
+        expectedSet.add(".d.");
+        expectedSet.add(".d");
+        expectedSet.add("d.e");
+        expectedSet.add("d.");
+        expectedSet.add("d");
+        expectedSet.add(".e");
+        expectedSet.add("e");
+
+        assertTrue(tokenSet.containsAll(expectedSet));
+        assertEquals(tokenSet.size(), expectedSet.size());
+    }
+
+    @Test
+    public void testMajorSplitterAtEdges() {
+        Set<String> tokenSet = new MajorTokenStream("<ab>").getTokenSet();
+        Set<String> expectedSet = new HashSet<>();
+
+        expectedSet.add("<");
+        expectedSet.add("ab");
+        expectedSet.add(">");
+
+        System.out.println(expectedSet);
+        System.out.println(tokenSet);
+
+        assertTrue(tokenSet.containsAll(expectedSet));
+        assertEquals(tokenSet.size(), expectedSet.size());
+    }
+
+
+    @Test
+    public void doubleHyphenTest() {
         Set<String> tokenSet = new MajorTokenStream("-one--two---three-").getTokenSet();
         Set<String> expectedSet = new HashSet<>(Arrays.asList("--","-one","two","-three-"));
         assertTrue(tokenSet.containsAll(expectedSet));
     }
 
     @Test
-    public void urlEncodingTest() throws IOException {
+    public void urlEncodingTest() {
         Set<String> tokenSet = new MajorTokenStream("html%20with%1234.%252010").getTokenSet();
         Set<String> expectedSet = new HashSet<>(Arrays.asList("html","%20","with%1234.","%2520","10"));
         assertTrue(tokenSet.containsAll(expectedSet));

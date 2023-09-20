@@ -47,6 +47,7 @@
 package com.teragrep.blf_01.tokenizer;
 
 import java.util.HashSet;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -57,7 +58,7 @@ public class Token {
     private final Set<String> minorTokens = new HashSet<>();
     private final String value;
     private final TreeSet<Integer> indexes = new TreeSet<>();
-    private final Set<Integer> reversedIndexes;
+    private final NavigableSet<Integer> reversedIndexes;
 
     public Token(String value) {
         this.value = value;
@@ -111,6 +112,15 @@ public class Token {
 
     public Set<String> getMinorTokens() {
         return minorTokens;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "Token: '" + value + "', minor tokens " + getMinorTokens();
     }
 
     private void addToken(char c) {

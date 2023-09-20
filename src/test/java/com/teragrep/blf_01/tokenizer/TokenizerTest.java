@@ -1,5 +1,3 @@
-package com.teragrep.blf_01.tokenizer;
-
 /*
  * Teragrep Bloom Filter Library BLF-01
  * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
@@ -46,9 +44,13 @@ package com.teragrep.blf_01.tokenizer;
  * a licensee so wish it.
  */
 
+package com.teragrep.blf_01.tokenizer;
+
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,39 +59,22 @@ public class TokenizerTest {
     @Test
     public void testTokenization() {
         Tokenizer tokenizer = new Tokenizer();
-        String testString = "[20/Feb/2022:01:02:03.456] https-in~ abcd_backend/<NOSRV> 0/-1/-1/-1/1 503 212 - - SCNN 2/2/0/0/0 0/0 \"GET /\"";
-        HashSet<String> tokenizedSet = tokenizer.tokenize(testString);
+        String testString = "[20/Feb/2022:03.456]";
+        Set<String> tokenizedSet = tokenizer.tokenize(testString);
 
-        HashSet<String> expectedSet = new HashSet<>();
-        expectedSet.add("");
-        expectedSet.add("01");
-        expectedSet.add("02");
-        expectedSet.add("0/-1/-1/-1/1");
-        expectedSet.add("03");
-        expectedSet.add("NOSRV");
-        expectedSet.add("0/0");
-        expectedSet.add("212");
-        expectedSet.add("456");
-        expectedSet.add("abcd_backend/");
-        expectedSet.add("backend");
-        expectedSet.add("https");
-        expectedSet.add("20/Feb/2022:01:02:03.456");
-        expectedSet.add("2/2/0/0/0");
-        expectedSet.add("Feb");
-        expectedSet.add("https-in~");
-        expectedSet.add("2022");
-        expectedSet.add("-");
-        expectedSet.add("/");
-        expectedSet.add("abcd");
-        expectedSet.add("0");
-        expectedSet.add("1");
-        expectedSet.add("2");
-        expectedSet.add("SCNN");
-        expectedSet.add("GET");
-        expectedSet.add("503");
-        expectedSet.add("in~");
-        expectedSet.add("20");
-
+        Set<String> expectedSet = new HashSet<>(
+                Arrays.asList(
+                        "/2022", "/Feb", "03", "20/Feb/2022:03",
+                        "2022:03", "20/Feb/2022:03.456", "20/Feb/", ":03.",
+                        "20/Feb/2022", "/2022:03.456", "03.",
+                        "Feb/", ":03.456", "456", "Feb/2022:03", "2022:03.456",
+                        "/2022:03.", "[", "2022:03.", "]", "20/Feb", "20/Feb/2022:03.",
+                        "Feb", "/Feb/2022:03", "03.456", "/Feb/2022:03.456", "/2022:",
+                        "2022", "Feb/2022:", "2022:", "/Feb/", "20/", ".456", "Feb/2022:03.",
+                        "20/Feb/2022:", "/Feb/2022:03.", "/Feb/2022:", "/Feb/2022", "Feb/2022",
+                        ":03", "20", "Feb/2022:03.456", "/2022:03"
+                ));
         assertTrue(tokenizedSet.containsAll(expectedSet));
+
     }
 }
