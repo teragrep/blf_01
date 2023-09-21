@@ -46,16 +46,31 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MajorTokenStreamTest {
+
+    @Test
+    @Disabled
+    void benchmarkTest() {
+        int inputSize = 100000;
+
+        String input = generateRandomString(inputSize, 6);
+        long start = System.currentTimeMillis();
+        Set<String> tokenSet = new MajorTokenStream(input).getTokenSetWithMinorTokens();
+        long end = System.currentTimeMillis();
+        System.out.println("Input of: " + input.length()+ ", set size: " + tokenSet.size());
+        System.out.println("Took: " + ((end - start)/1000) + "s");
+    }
 
     @Test
     public void simpleMajorTokenStreamTest() {
@@ -135,5 +150,20 @@ public class MajorTokenStreamTest {
         Set<String> tokenSet = new MajorTokenStream("html%20with%1234.%252010").getTokenSet();
         Set<String> expectedSet = new HashSet<>(Arrays.asList("html","%20","with%1234.","%2520","10"));
         assertTrue(tokenSet.containsAll(expectedSet));
+    }
+
+    private String generateRandomString(int size, int splitterFreq) {
+        Random random = new Random();
+        String language = "123456789abcdefghijklmnopqrstuvwxyz#$%-./:=@_)";
+        String splitters = ",;<>";
+        StringBuilder sb = new StringBuilder(size);
+        for (int i = 0; i <size; i++ ) {
+            if (i % splitterFreq == 0) {
+                sb.append(splitters.charAt(random.nextInt(splitters.length())));
+            } else {
+                sb.append(language.charAt(random.nextInt(language.length())));
+            }
+        }
+        return sb.toString();
     }
 }
