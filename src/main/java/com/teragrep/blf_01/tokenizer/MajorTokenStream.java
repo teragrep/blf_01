@@ -143,6 +143,6 @@ public class MajorTokenStream {
 
 
     private boolean match(String value) {
-        return value.matches(compiledRegex.pattern());
+        return compiledRegex.matcher(value).matches();
     }
 }

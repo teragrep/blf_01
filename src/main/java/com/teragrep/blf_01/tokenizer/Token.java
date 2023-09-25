@@ -50,7 +50,6 @@ import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Token {
@@ -137,7 +136,6 @@ public class Token {
     }
 
     private static boolean match(char ch) {
-        final Matcher matcher = compiledRegex.matcher(String.valueOf(ch));
-        return matcher.matches();
+        return compiledRegex.matcher(String.valueOf(ch)).matches();
     }
  }
