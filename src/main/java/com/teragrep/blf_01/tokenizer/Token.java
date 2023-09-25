@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Token {
@@ -58,10 +59,13 @@ public class Token {
     private final Set<String> minorTokens = new HashSet<>();
     private final String value;
     private final TreeSet<Integer> indexes = new TreeSet<>();
-    private final NavigableSet<Integer> reversedIndexes;
+    private NavigableSet<Integer> reversedIndexes;
 
     public Token(String value) {
         this.value = value;
+    }
+
+    public Set<String> getMinorTokens() {
 
         // Find splitter indexes
         for (int i = 0; i < value.length(); i++) {
@@ -87,6 +91,8 @@ public class Token {
             // add without splitter
             addMinorTokensFromIndex(i+1);
         }
+
+        return minorTokens;
     }
 
     private void addMinorTokensFromIndex(int index) {
@@ -110,10 +116,6 @@ public class Token {
         }
     }
 
-    public Set<String> getMinorTokens() {
-        return minorTokens;
-    }
-
     public String getValue() {
         return value;
     }
@@ -135,6 +137,7 @@ public class Token {
     }
 
     private static boolean match(char ch) {
-        return String.valueOf(ch).matches(compiledRegex.pattern());
+        final Matcher matcher = compiledRegex.matcher(String.valueOf(ch));
+        return matcher.matches();
     }
  }
