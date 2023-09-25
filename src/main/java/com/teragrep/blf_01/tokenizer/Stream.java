@@ -35,6 +35,11 @@ public class Stream implements Supplier<Byte> {
         pointer = mark;
     }
 
+    public void skip(int ammount) {
+        System.out.println("Stream skipping: " + ammount);
+        pointer = pointer + ammount;
+    }
+
     boolean next() {
         if (pointer == bytesInBuffer) {
             int read;
@@ -44,7 +49,7 @@ public class Stream implements Supplier<Byte> {
                 throw new UncheckedIOException(ex);
             }
 
-            if (read < 0) {
+            if (read <= 0) {
                 pointer = bytesInBuffer;
                 return false;
 

@@ -47,6 +47,7 @@
 package com.teragrep.blf_01.tokenizer;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -57,20 +58,23 @@ public class MajorTokenStream {
     private static final String regex = "(\\t|\\n|\\r| |\\!|\\\"|%0A|%20|%21|%2520|%2526|%26|%28|%29|%2B|%2C|%3A|%3B|%3D|%5B|%5D|%7C|&|\\'|\\(|\\)|\\*|\\+|,|--|;|<|>|\\?|\\[|\\]|\\{|\\||\\})";
     private static final Pattern compiledRegex = Pattern.compile(regex);
     private final String input;
-    private final Set<Token> tokens;
+
 
     public MajorTokenStream(String input) {
         this.input = input;
-        this.tokens = collectMajorTokens();
     }
 
     public Set<String> getTokenSet() {
-        return tokens.stream().map(Token::getValue).collect(Collectors.toSet());
+        return collectMajorTokens()
+                .stream()
+                .map(Token::getValue)
+                .collect(Collectors.toSet());
     }
 
     public Set<String> getTokenSetWithMinorTokens() {
+        Set<Token> tokenSet = collectMajorTokens();
         Set<String> returnSet = new HashSet<>();
-        for(Token t : tokens) {
+        for(Token t : tokenSet) {
             returnSet.add(t.getValue());
             returnSet.addAll(t.getMinorTokens());
         }
@@ -140,7 +144,6 @@ public class MajorTokenStream {
 
         return resultSet;
     }
-
 
     private boolean match(String value) {
         return compiledRegex.matcher(value).matches();

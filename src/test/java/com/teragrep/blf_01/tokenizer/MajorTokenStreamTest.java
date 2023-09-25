@@ -60,9 +60,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MajorTokenStreamTest {
 
     @Test
-    @Disabled
     void benchmarkTest() {
-        int inputSize = 100000;
+        // 10 million
+        int inputSize = 10000000;
 
         String input = generateRandomString(inputSize, 6);
         long start = System.currentTimeMillis();
