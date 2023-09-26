@@ -48,6 +48,7 @@ package com.teragrep.blf_01.tokenizer;
 
 import java.util.regex.Pattern;
 
+@Deprecated
 public final class SubTokenSplit {
     private static final String regex = "(#|\\$|%|-|\\.|/|:|=|@|\\\\|_)";;
     private static final Pattern compiledRegex = Pattern.compile(regex);

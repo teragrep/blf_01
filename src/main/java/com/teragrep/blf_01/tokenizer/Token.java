@@ -46,6 +46,7 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;

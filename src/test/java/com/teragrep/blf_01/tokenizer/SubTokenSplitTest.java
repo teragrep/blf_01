@@ -1,5 +1,3 @@
-package com.teragrep.blf_01.tokenizer;
-
 /*
  * Teragrep Bloom Filter Library BLF-01
  * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
@@ -46,10 +44,13 @@ package com.teragrep.blf_01.tokenizer;
  * a licensee so wish it.
  */
 
+package com.teragrep.blf_01.tokenizer;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Deprecated
 public class SubTokenSplitTest {
 
     private final SubTokenSplit tokenSplit;

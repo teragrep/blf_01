@@ -47,7 +47,6 @@
 package com.teragrep.blf_01.tokenizer;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;

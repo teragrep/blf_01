@@ -1,6 +1,6 @@
 /*
  * Teragrep Bloom Filter Library BLF-01
- * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
+ * Copyright (C) 2019, 2020, 2021, 2022, 2023 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,56 +46,28 @@
 
 package com.teragrep.blf_01.tokenizer;
 
-import org.junit.jupiter.api.Test;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class SplitterMatcher {
+    private static final Set<ByteBuffer> multiSplitters =
+            Arrays.stream(new String[]{"%0A", "%20", "%21", "%2520", "%2526", "%26", "%28", "%29", "%2B", "%2C", "%3A", "%3B", "%3D", "%5B", "%5D", "%7C", "--"})
+            .map(str -> ByteBuffer.wrap(str.getBytes(StandardCharsets.US_ASCII))).collect(Collectors.toSet());
+    private static final Set<Byte> singleSplitters =
+            Arrays.stream(new String[]{"\t","\n","\r"," ","!","\\","&","'","(",")","*","+",",",";","<",">","?","[","]","{","|","}"})
+                    .map(str -> str.getBytes(StandardCharsets.US_ASCII)[0]).collect(Collectors.toSet());
 
-@Deprecated
-public class TokenSplitTest {
-
-    private final TokenSplit tokenSplit;
-
-    public TokenSplitTest() {
-        tokenSplit = new TokenSplit();
+    public static boolean singleMatch(byte compared) {
+        return singleSplitters.contains(compared);
     }
 
-    @Test
-    public void majorSimpleTest() {
-        String[] tokens = tokenSplit.split("@s-d+b4s-");
-        assertEquals("@s-d", tokens[0]);
-        assertEquals("b4s-", tokens[1]);
-    }
-
-    @Test
-    public void majorMatchAndMoreTest() {
-        String[] tokens = tokenSplit.split("-one--two---three-");
-        assertEquals("-one", tokens[0]);
-        assertEquals("two", tokens[1]);
-        assertEquals("-three-", tokens[2]);
-    }
-
-    @Test
-    public void majorMatchLogTest() {
-        String testString = "[20/Feb/2022:01:02:03.456] https-in~ abcd_backend/<NOSRV> 0/-1/-1/-1/1 503 212 - - SCNN 2/2/0/0/0 0/0 \"GET /\"";
-
-        String[] tokens = tokenSplit.split(testString);
-        assertEquals("", tokens[0]);
-        assertEquals("20/Feb/2022:01:02:03.456", tokens[1]);
-        assertEquals("", tokens[2]);
-        assertEquals("https-in~", tokens[3]);
-        assertEquals("abcd_backend/", tokens[4]);
-        assertEquals("NOSRV", tokens[5]);
-        assertEquals("", tokens[6]);
-        assertEquals("0/-1/-1/-1/1", tokens[7]);
-        assertEquals("503", tokens[8]);
-        assertEquals("212", tokens[9]);
-        assertEquals("-", tokens[10]);
-        assertEquals("-", tokens[11]);
-        assertEquals("SCNN", tokens[12]);
-        assertEquals("2/2/0/0/0", tokens[13]);
-        assertEquals("0/0", tokens[14]);
-        assertEquals("", tokens[15]);
-        assertEquals("GET", tokens[16]);
-        assertEquals("/", tokens[17]);
+    public static boolean multiMatch(byte[] compared) {
+        if (compared[0] != 37 && compared[0] != 45) {
+            return false;
+        }
+        return multiSplitters.contains(ByteBuffer.wrap(compared));
     }
 }
