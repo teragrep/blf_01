@@ -136,10 +136,11 @@ public class Token {
             majorToken.get(data, 0, data.length);
             return data;
         } catch (OutOfMemoryError e) {
-            System.out.println("Array size too large: " + (end - start));
-            System.out.println("Max memory:" + Runtime.getRuntime().maxMemory());
+            throw new
+                    RuntimeException("Tokenizer run out of memory trying to create sub array[ "
+                    + (end-start)+"]. Max memory: "
+                    + Runtime.getRuntime().maxMemory() );
         }
-        return new byte[]{};
     }
 
     private void addToken(byte [] array) {
