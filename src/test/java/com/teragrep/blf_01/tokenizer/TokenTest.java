@@ -125,23 +125,6 @@ public class TokenTest {
 
     }
 
-    @Test
-    @Disabled
-    public void performanceTest() {
-        int inputSize = 1000;
-        String input = generateRandomString(inputSize, 6);
-
-        ByteBuffer buffer = ByteBuffer.wrap(input.getBytes(StandardCharsets.US_ASCII));
-        Token bt = new Token(buffer);
-
-        long start = System.currentTimeMillis();
-        bt.asStringSet();
-        long end = System.currentTimeMillis();
-
-        System.out.println("Input of: " + input.length());
-        System.out.println("Took: " + ((end - start)/1000) + "s");
-    }
-
     private String generateRandomString(int size, int splitterFreq) {
         Random random = new Random();
         String language = "123456789abcdefghijklmnopqrstuvwxyz";
