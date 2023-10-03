@@ -46,97 +46,113 @@
 
 package com.teragrep.blf_01.tokenizer;
 
-import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 public class Token {
-    private static final String regex = "(#|\\$|%|-|\\.|/|:|=|@|\\\\|_)";
-    private static final Pattern compiledRegex = Pattern.compile(regex);
-    private final Set<String> minorTokens = new HashSet<>();
-    private final String value;
+    private final ByteBuffer majorToken;
+    private final int capacity;
+    private final Set<ByteBuffer> minorTokens = new HashSet<>();
     private final TreeSet<Integer> indexes = new TreeSet<>();
-    private NavigableSet<Integer> reversedIndexes;
 
-    public Token(String value) {
-        this.value = value;
+    public Token(ByteBuffer buffer) {
+        this.majorToken = buffer;
+        this.capacity = buffer.capacity();
     }
 
-    public Set<String> getMinorTokens() {
-
-        // Find splitter indexes
-        for (int i = 0; i < value.length(); i++) {
-            if (match(value.charAt(i))) {
-                indexes.add(i);
-            }
-        }
-
-        this.reversedIndexes = indexes.descendingSet();
-
-        addMinorTokensFromIndex(0);
-
-        for(int i: indexes) {
-            if (i == 0) {
-                addToken(this.value.charAt(i));
-            }
-            if (i == value.length()-1) {
-                addToken(this.value.charAt(i));
-            }
-
-            // add with splitter
-            addMinorTokensFromIndex(i);
-            // add without splitter
-            addMinorTokensFromIndex(i+1);
-        }
-
+    public Set<ByteBuffer> getPermutations() {
+        collectPermutations();
         return minorTokens;
     }
 
-    private void addMinorTokensFromIndex(int index) {
-        String subString = value.substring(index);
+    public ByteBuffer getToken() {
+        return majorToken;
+    }
 
-        if(subString.isEmpty() || subString.equals(" ")) {
-            return;
+    public Set<String> asStringSet() {
+        collectPermutations();
+
+        Set<String> resultSet = new HashSet<>();
+
+        for(ByteBuffer bf: minorTokens) {
+            String decoded = StandardCharsets.US_ASCII.decode(bf).toString();
+            resultSet.add(decoded);
         }
 
-        // Add substring
-        if (!subString.equals(value)) {
-            addToken(subString);
+        return resultSet;
+    }
+
+    private void collectPermutations() {
+        majorToken.clear();
+
+        // Get indexes of splitters
+        while(majorToken.hasRemaining()) {
+            byte b = majorToken.get();
+            if (SplitterMatcher.minorMatch(b)) {
+                indexes.add(majorToken.position()-1);
+            }
         }
 
-        for (int i : reversedIndexes) {
+        addPermutationsFromIndex(0);
+
+        // Add permutations from each splitter index
+        for (int i: indexes) {
+            // Add splitter if first
+            if (i == 0) {
+                ByteBuffer start = ByteBuffer.wrap(getSubArray(i,i+1));
+                minorTokens.add(start);
+            }
+
+            addPermutationsFromIndex(i);
+            addPermutationsFromIndex(i+1);
+        }
+
+    }
+
+    private void addPermutationsFromIndex(int index) {
+
+        byte[] current = getSubArray(index, capacity);
+
+        addToken(current);
+
+        for(int i: indexes.descendingSet()) {
             if (i <= index) {
                 break;
             }
-            addToken(value.substring(index,i));
-            addToken(value.substring(index,i+1));
+
+            addToken(getSubArray(index, i+1));
+            addToken(getSubArray(index, i));
+
         }
     }
 
-    public String getValue() {
-        return value;
+    private byte[] getSubArray(int start, int end) {
+        majorToken.position(start);
+        try {
+            byte[] data = new byte[end - start];
+            majorToken.get(data, 0, data.length);
+            return data;
+        } catch (OutOfMemoryError e) {
+            System.out.println("Array size too large: " + (end - start));
+            System.out.println("Max memory:" + Runtime.getRuntime().maxMemory());
+        }
+        return new byte[]{};
     }
 
-    @Override
-    public String toString() {
-        return "Token: '" + value + "', minor tokens " + getMinorTokens();
-    }
-
-    private void addToken(char c) {
-        if (!String.valueOf(c).equals(value)) {
-            minorTokens.add(String.valueOf(c));
+    private void addToken(byte [] array) {
+        if (array.length > 0) {
+            minorTokens.add(ByteBuffer.wrap(array));
         }
     }
-    private void addToken(String s) {
-        if (!s.equals(value)) {
-            minorTokens.add(s);
-        }
-    }
 
-    private static boolean match(char ch) {
-        return compiledRegex.matcher(String.valueOf(ch)).matches();
+    void printByteArray (byte [] array) {
+        System.out.print("[");
+        for (byte b : array) {
+            System.out.print((char) b);
+        }
+        System.out.print("]\n");;
     }
- }
+}

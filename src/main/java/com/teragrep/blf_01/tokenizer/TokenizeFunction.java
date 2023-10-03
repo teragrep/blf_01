@@ -52,13 +52,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<ByteBuffer>> {
-    private final Set<ByteBuffer> tokens = new HashSet<>();
+public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Token>> {
+    private final Set<Token> tokens = new HashSet<>();
     private final ByteArrayOutputStream multiTokenBuilder = new ByteArrayOutputStream();
     private int splitterMark = 0;
 
     @Override
-    public Set<ByteBuffer> apply(Stream stream, ByteBuffer buffer) {
+    public Set<Token> apply(Stream stream, ByteBuffer buffer) {
 
         if (!stream.next()) {
             throw new RuntimeException("Empty stream");
@@ -80,8 +80,8 @@ public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Byte
 
             // major splitter
             if (SplitterMatcher.singleMatch(b)) {
-                byte[] splitter = {b};
-                tokens.add(ByteBuffer.wrap(splitter));
+                Token token = new Token(ByteBuffer.wrap(new byte[]{b}));
+                tokens.add(token);
                 addBytesFromSplitterMark(buffer, -1);
             }
 
@@ -108,7 +108,7 @@ public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Byte
 
             if (SplitterMatcher.multiMatch(multiTokenBuilder.toByteArray())) {
                 addBytesFromSplitterMark(buffer, -1);
-                tokens.add(ByteBuffer.wrap(multiTokenBuilder.toByteArray()));
+                tokens.add(new Token(ByteBuffer.wrap(multiTokenBuilder.toByteArray())));
                 stream.reset();
                 stream.skip(i);
                 splitterMark = splitterMark+i-1;
@@ -140,7 +140,8 @@ public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Byte
         buffer.get(data);
 
         // TODO slow insert - 500ms on 10M string input length
-        tokens.add(ByteBuffer.wrap(data));
+        Token token = new Token(ByteBuffer.wrap(data));
+        tokens.add(token);
 
         splitterMark = buffer.position();
     }

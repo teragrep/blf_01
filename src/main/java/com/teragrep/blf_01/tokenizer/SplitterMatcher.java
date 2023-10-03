@@ -60,8 +60,16 @@ public class SplitterMatcher {
             Arrays.stream(new String[]{"\t","\n","\r"," ","!","\\","&","'","(",")","*","+",",",";","<",">","?","[","]","{","|","}"})
                     .map(str -> str.getBytes(StandardCharsets.US_ASCII)[0]).collect(Collectors.toSet());
 
+    private static final Set<Byte> minorSplitters =
+            Arrays.stream(new String[]{"#","$","%","-",".","/",":","=","@","\\\\","_"})
+                    .map(str -> str.getBytes(StandardCharsets.US_ASCII)[0]).collect(Collectors.toSet());
+
     public static boolean singleMatch(byte compared) {
         return singleSplitters.contains(compared);
+    }
+
+    public static boolean minorMatch(byte compared) {
+        return minorSplitters.contains(compared);
     }
 
     public static boolean multiMatch(byte[] compared) {

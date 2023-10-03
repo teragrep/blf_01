@@ -46,9 +46,13 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,112 +61,110 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TokenTest {
 
     @Test
-    public void printTest() {
-        final Token token = new Token("%20");
+    public void permutationsTest() {
+        ByteBuffer buffer =
+                ByteBuffer.wrap("b.c.d".getBytes(StandardCharsets.US_ASCII));
+        Token token = new Token(buffer);
 
-        assertEquals("Token: '%20', minor tokens [%, 20]", token.toString());
-    }
+        final Set<ByteBuffer> resultSet = token.getPermutations();
+        final HashSet<ByteBuffer> expectedSet = new HashSet<>();
 
-    @Test
-    public void splitterAtStartTest() {
-        final Token token = new Token("%20");
-        final Set<String> set = token.getMinorTokens();
-        final HashSet<String> expectedSet = new HashSet<>();
-        expectedSet.add("%");
-        expectedSet.add("20");
+        expectedSet.add(ByteBuffer.wrap("b.c.d".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("b.c.".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("b.c".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("b.".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("b".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap(".c.d".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap(".c.".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap(".c".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("c.d".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("c.".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("c".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap(".d".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("d".getBytes(StandardCharsets.US_ASCII)));
 
-        assertTrue(set.containsAll(expectedSet));
-        assertEquals(expectedSet.size(), set.size());
-    }
-
-    @Test
-    public void splitterAtEndTest() {
-        final Token token = new Token("20.");
-        final Set<String> set = token.getMinorTokens();
-        final HashSet<String> expectedSet = new HashSet<>();
-        expectedSet.add("20");
-        expectedSet.add(".");
-
-        assertTrue(set.containsAll(expectedSet));
-        assertEquals(expectedSet.size(), set.size());
-    }
-
-    @Test
-    public void multipleSplitterTypesTest() {
-        final Token token = new Token("b/c:d=e");
-        final Set<String> set = token.getMinorTokens();
-        final HashSet<String> expectedSet = new HashSet<>();
-
-        expectedSet.add("b/c:d=");
-        expectedSet.add("b/c:d");
-        expectedSet.add("b/c:");
-        expectedSet.add("b/c");
-        expectedSet.add("b/");
-        expectedSet.add("b");
-        expectedSet.add("/c:d=e");
-        expectedSet.add("/c:d=");
-        expectedSet.add("/c:d");
-        expectedSet.add("/c:");
-        expectedSet.add("/c");
-        expectedSet.add("c:d=e");
-        expectedSet.add("c:d=");
-        expectedSet.add("c:d");
-        expectedSet.add("c:");
-        expectedSet.add("c");
-        expectedSet.add(":d=e");
-        expectedSet.add(":d=");
-        expectedSet.add(":d");
-        expectedSet.add("d");
-        expectedSet.add("d=e");
-        expectedSet.add("d=");
-        expectedSet.add("=e");
-        expectedSet.add("e");
-
-        assertTrue(set.containsAll(expectedSet));
-        assertEquals(expectedSet.size(), set.size());
-
+        assertEquals(expectedSet.size(), resultSet.size());
+        assertTrue(expectedSet.containsAll(resultSet));
     }
 
     @Test
     public void noSplitterTest() {
-        final Token token = new Token("abcdefghijklmn");
-        final Set<String> set = token.getMinorTokens();
+        final Token token =
+                new Token(
+                        ByteBuffer.wrap("abcdefghijklmn".getBytes(StandardCharsets.US_ASCII)));
+        final Set<ByteBuffer> set = token.getPermutations();
 
-        assertEquals(0, set.size());
+        assertEquals(1, set.size());
     }
+
     @Test
-    public void multipleSplitTest() {
-        final Token token = new Token("b.c.d.e");
-        final Set<String> set = token.getMinorTokens();
-        final HashSet<String> expectedSet = new HashSet<>();
+    public void splitterAtStartTest() {
+        final Token token =
+                new Token(
+                        ByteBuffer.wrap(".20".getBytes(StandardCharsets.US_ASCII)));
+        final Set<ByteBuffer> set = token.getPermutations();
 
-        expectedSet.add("b.c.d.");
-        expectedSet.add("b.c.d");
-        expectedSet.add("b.c.");
-        expectedSet.add("b.c");
-        expectedSet.add("b.");
-        expectedSet.add("b");
-        expectedSet.add(".c.d.e");
-        expectedSet.add(".c.d.");
-        expectedSet.add(".c.d");
-        expectedSet.add(".c.");
-        expectedSet.add(".c");
-        expectedSet.add("c.d.e");
-        expectedSet.add("c.d.");
-        expectedSet.add("c.d");
-        expectedSet.add("c.");
-        expectedSet.add("c");
-        expectedSet.add(".d.e");
-        expectedSet.add(".d.");
-        expectedSet.add(".d");
-        expectedSet.add("d.e");
-        expectedSet.add("d.");
-        expectedSet.add("d");
-        expectedSet.add(".e");
-        expectedSet.add("e");
+        assertEquals(3, set.size());
 
-        assertTrue(set.containsAll(expectedSet));
-        assertEquals(expectedSet.size(), set.size());
+    }
 
+    @Test
+    public void splitterAtEndTest() {
+        final Token token =
+                new Token(
+                        ByteBuffer.wrap("20.".getBytes(StandardCharsets.US_ASCII)));
+        final Set<ByteBuffer> resultSet = token.getPermutations();
+
+        final HashSet<ByteBuffer> expectedSet = new HashSet<>();
+
+        expectedSet.add(ByteBuffer.wrap(".".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("20".getBytes(StandardCharsets.US_ASCII)));
+        expectedSet.add(ByteBuffer.wrap("20.".getBytes(StandardCharsets.US_ASCII)));
+
+        assertTrue(expectedSet.containsAll(resultSet));
+
+    }
+
+    @Test
+    @Disabled
+    public void performanceTest() {
+        int inputSize = 1000;
+        String input = generateRandomString(inputSize, 6);
+
+        ByteBuffer buffer = ByteBuffer.wrap(input.getBytes(StandardCharsets.US_ASCII));
+        Token bt = new Token(buffer);
+
+        long start = System.currentTimeMillis();
+        bt.asStringSet();
+        long end = System.currentTimeMillis();
+
+        System.out.println("Input of: " + input.length());
+        System.out.println("Took: " + ((end - start)/1000) + "s");
+    }
+
+    private String generateRandomString(int size, int splitterFreq) {
+        Random random = new Random();
+        String language = "123456789abcdefghijklmnopqrstuvwxyz";
+        String splitters = ".";
+        StringBuilder sb = new StringBuilder(size);
+        for (int i = 0; i <size; i++ ) {
+            if (i % splitterFreq == 0) {
+                sb.append(splitters.charAt(random.nextInt(splitters.length())));
+            } else {
+                sb.append(language.charAt(random.nextInt(language.length())));
+            }
+        }
+        return sb.toString();
+    }
+
+    private void printBufferSet(Set<ByteBuffer> set) {
+        System.out.print("Result : [");
+        set.forEach(buf -> {
+            for(byte b: buf.array()) {
+                System.out.print((char) b);
+            }
+            System.out.print(", ");
+        });
+        System.out.print("]\n");
     }
 }

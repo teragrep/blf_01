@@ -46,13 +46,29 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public final class Tokenizer {
 
     public static Set<String> tokenize(String input) {
-        MajorTokenStream mts = new MajorTokenStream(input);
 
-        return mts.getTokenSetWithMinorTokens();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(input.length());
+        BiFunction<Stream, ByteBuffer, Set<Token>> fn = new TokenizeFunction();
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
+        Stream stream = new Stream(bais);
+
+        Set<Token> result = fn.apply(stream, buffer);
+        Set<String> stringSet = new HashSet<>();
+
+        for(Token bt : result) {
+            stringSet.addAll(bt.asStringSet());
+        }
+
+        return stringSet;
     }
 }

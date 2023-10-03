@@ -79,8 +79,26 @@ public class SplitterMatcherTest {
 
         assertFalse(SplitterMatcher.singleMatch("a".getBytes(StandardCharsets.US_ASCII)[0]));
         assertFalse(SplitterMatcher.singleMatch("3".getBytes(StandardCharsets.US_ASCII)[0]));
-        assertFalse(SplitterMatcher.singleMatch("2,".getBytes(StandardCharsets.US_ASCII)[0]));
     }
+
+    @Test
+    public void minorCharTest() {
+        assertTrue(SplitterMatcher.minorMatch("#".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("$".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("%".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("-".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch(".".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("/".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch(":".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("=".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("@".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("\\\\".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertTrue(SplitterMatcher.minorMatch("_".getBytes(StandardCharsets.US_ASCII)[0]));
+
+        assertFalse(SplitterMatcher.minorMatch("2".getBytes(StandardCharsets.US_ASCII)[0]));
+        assertFalse(SplitterMatcher.minorMatch(" ".getBytes(StandardCharsets.US_ASCII)[0]));
+    }
+
     @Test
     public void multiCharTest() {
 
@@ -106,5 +124,6 @@ public class SplitterMatcherTest {
         assertFalse(SplitterMatcher.multiMatch("%111".getBytes(StandardCharsets.US_ASCII)));
         assertFalse(SplitterMatcher.multiMatch("111".getBytes(StandardCharsets.US_ASCII)));
         assertFalse(SplitterMatcher.multiMatch("%".getBytes(StandardCharsets.US_ASCII)));
+        assertFalse(SplitterMatcher.multiMatch(" ".getBytes(StandardCharsets.US_ASCII)));
     }
 }

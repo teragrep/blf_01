@@ -89,7 +89,7 @@ public class TokenizeFunctionTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
         Stream stream = new Stream(bais);
         ByteBuffer buffer = ByteBuffer.allocateDirect(input.length());
-        BiFunction<Stream, ByteBuffer, Set<ByteBuffer>> fn = new TokenizeFunction();
+        BiFunction<Stream, ByteBuffer, Set<Token>> fn = new TokenizeFunction();
 
         long start = System.currentTimeMillis();
 
@@ -122,14 +122,13 @@ public class TokenizeFunctionTest {
         Stream stream = new Stream(bais);
         ByteBuffer buffer = ByteBuffer.allocate(input.length());
 
-        BiFunction<Stream, ByteBuffer, Set<ByteBuffer>> fn = new TokenizeFunction();
-        Set<ByteBuffer> result = fn.apply(stream, buffer);
+        BiFunction<Stream, ByteBuffer, Set<Token>> fn = new TokenizeFunction();
+        Set<Token> result = fn.apply(stream, buffer);
 
         Set<String> decoded = new HashSet<>();
 
-        for (ByteBuffer buf : result) {
-            String s = new String(buf.array(), StandardCharsets.US_ASCII);
-            decoded.add(s);
+        for (Token buf : result) {
+            decoded.addAll(buf.asStringSet());
         }
         return decoded;
     }

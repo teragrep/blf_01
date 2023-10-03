@@ -66,23 +66,23 @@ public class MajorTokenStream {
     public Set<String> getTokenSet() {
         return collectMajorTokens()
                 .stream()
-                .map(Token::getValue)
+                .map(StringToken::getValue)
                 .collect(Collectors.toSet());
     }
 
     public Set<String> getTokenSetWithMinorTokens() {
-        Set<Token> tokenSet = collectMajorTokens();
+        Set<StringToken> tokenSet = collectMajorTokens();
         Set<String> returnSet = new HashSet<>();
-        for(Token t : tokenSet) {
+        for(StringToken t : tokenSet) {
             returnSet.add(t.getValue());
             returnSet.addAll(t.getMinorTokens());
         }
         return returnSet;
     }
 
-    private Set<Token> collectMajorTokens() {
+    private Set<StringToken> collectMajorTokens() {
 
-        final Set<Token> resultSet = new HashSet<>();
+        final Set<StringToken> resultSet = new HashSet<>();
         final StringReader reader = new StringReader(input);
         final StringBuilder builder = new StringBuilder();
         final StringBuilder overlap = new StringBuilder();
@@ -92,7 +92,7 @@ public class MajorTokenStream {
                 int ascii = reader.read();
                 if (ascii < 0) {
                     if (builder.length() > 0) {
-                        resultSet.add(new Token(builder.toString()));
+                        resultSet.add(new StringToken(builder.toString()));
                     }
                     break;
                 }
@@ -108,8 +108,8 @@ public class MajorTokenStream {
                         overlap.append(overlapChar);
 
                         if (match(overlap.toString())) {
-                            resultSet.add(new Token(overlap.toString()));
-                            resultSet.add(new Token(builder.deleteCharAt(builder.length() - 1).toString()));
+                            resultSet.add(new StringToken(overlap.toString()));
+                            resultSet.add(new StringToken(builder.deleteCharAt(builder.length() - 1).toString()));
                             builder.setLength(0);
                             overlap.setLength(0);
                             reader.reset();
@@ -126,11 +126,11 @@ public class MajorTokenStream {
                     if (builder.length() > 1) {
                         String splitter = builder.substring(builder.length()-1);
                         String trimmed = builder.substring(0, builder.length()-1);
-                        resultSet.add(new Token(splitter));
-                        resultSet.add(new Token(trimmed));
+                        resultSet.add(new StringToken(splitter));
+                        resultSet.add(new StringToken(trimmed));
 
                     } else {
-                        resultSet.add(new Token(builder.toString()));
+                        resultSet.add(new StringToken(builder.toString()));
                     }
                     builder.setLength(0);
                 }
