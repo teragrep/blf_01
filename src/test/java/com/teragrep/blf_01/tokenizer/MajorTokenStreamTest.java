@@ -62,9 +62,8 @@ public class MajorTokenStreamTest {
     @Test
     @Disabled
     void benchmarkTest() {
-        // 10 million
-        int inputSize = 10000000;
 
+        int inputSize = 10000000;
         String input = generateRandomString(inputSize, 6);
 
         long start = System.currentTimeMillis();
@@ -131,9 +130,6 @@ public class MajorTokenStreamTest {
         expectedSet.add("<");
         expectedSet.add("ab");
         expectedSet.add(">");
-
-        System.out.println(expectedSet);
-        System.out.println(tokenSet);
 
         assertTrue(tokenSet.containsAll(expectedSet));
         assertEquals(tokenSet.size(), expectedSet.size());

@@ -148,12 +148,4 @@ public class Token {
             minorTokens.add(ByteBuffer.wrap(array));
         }
     }
-
-    void printByteArray (byte [] array) {
-        System.out.print("[");
-        for (byte b : array) {
-            System.out.print((char) b);
-        }
-        System.out.print("]\n");;
-    }
 }
