@@ -1,8 +1,6 @@
-package com.teragrep.blf_01;
-
 /*
  * Teragrep Bloom Filter Library BLF-01
- * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
+ * Copyright (C) 2019, 2020, 2021, 2022, 2023 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,16 +43,47 @@ package com.teragrep.blf_01;
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-
-import org.junit.jupiter.api.Test;
+package com.teragrep.blf_01;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.function.Supplier;
 
-public class FilterTest {
+final class Stream implements Supplier<Byte> {
 
-    @Test
-    public void testFilter() throws IOException {
-        FilterManager filterManager = new FilterManager();
-        filterManager.select();
+    private final InputStream inputStream;
+
+    private final byte[] buffer = new byte[256 * 1024];
+    private int pointer = -1;
+    private int bytesInBuffer = -1;
+    private byte b;
+
+    Stream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    public Byte get() {
+        return b;
+    }
+
+    boolean next() {
+        if (pointer == bytesInBuffer) {
+            int read;
+            try {
+                read = inputStream.read(buffer, 0, buffer.length);
+            } catch (IOException ioException) {
+                throw new UncheckedIOException(ioException);
+            }
+            if (read <= 0) { // EOF
+                pointer = bytesInBuffer;
+                return false;
+            }
+
+            bytesInBuffer = read;
+            pointer = 0;
+        }
+        b = buffer[pointer++];
+        return true;
     }
 }

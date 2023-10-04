@@ -1,8 +1,6 @@
-package com.teragrep.blf_01;
-
 /*
  * Teragrep Bloom Filter Library BLF-01
- * Copyright (C) 2019, 2020, 2021, 2022  Suomen Kanuuna Oy
+ * Copyright (C) 2019, 2020, 2021, 2022, 2023 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,48 +43,7 @@ package com.teragrep.blf_01;
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
+package com.teragrep.blf_01;
 
-import org.apache.spark.util.sketch.BloomFilter;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import java.io.IOException;
-
-public class FilterManager {
-
-    private final long defaultSize = 90000L;
-
-    
-    public FilterManager() {
-    }
-
-    public void select() throws IOException {
-        BloomFilter bloomFilter = BloomFilter.create(defaultSize, 0.001);
-        //System.out.println(bloomFilter.bitSize());
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bloomFilter.writeTo(outputStream);
-        ByteArrayInputStream is = new ByteArrayInputStream(outputStream.toByteArray());
-        /*
-        PreparedStatement stmt = con.prepareStatement( "SELECT * FROM bloomTable WHERE bloommatch( ?, bloomTable.filter );" );
-        stmt.setBlob( 1, is );
-        ResultSet rs = stmt.executeQuery();
-         */
-    }
-
-    public void update() throws IOException {
-        BloomFilter bloomFilter = BloomFilter.create(defaultSize, 0.001);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bloomFilter.writeTo(outputStream);
-        ByteArrayInputStream is = new ByteArrayInputStream(outputStream.toByteArray());
-
-        /*
-        PreparedStatement stmt = con.prepareStatement( "UPDATE bloomTable SET filter=bloomupdate( ?, bloomTable.filter ) WHERE id=?;" );
-        stmt.setBlob( 1, is );
-        stmt.setint( 2, 5 );
-        stmt.executeUpdate();
-         */
-    }
+public class Token {
 }

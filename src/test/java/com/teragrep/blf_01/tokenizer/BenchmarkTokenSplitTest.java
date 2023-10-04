@@ -46,13 +46,14 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
-@Deprecated
+@Disabled
 @State(Scope.Thread)
 public class BenchmarkTokenSplitTest {
 

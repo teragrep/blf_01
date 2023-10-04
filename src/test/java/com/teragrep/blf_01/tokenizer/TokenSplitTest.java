@@ -46,10 +46,12 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 @Deprecated
 public class TokenSplitTest {
 

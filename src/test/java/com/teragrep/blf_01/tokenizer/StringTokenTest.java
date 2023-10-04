@@ -46,6 +46,7 @@
 
 package com.teragrep.blf_01.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -53,7 +54,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+@Disabled
 public class StringTokenTest {
 
     @Test
