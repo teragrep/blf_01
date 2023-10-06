@@ -92,7 +92,7 @@ public class DelimiterWindow {
                 // take one out (insert to token)
                 byte b = windowBuffer.get();
 
-                // +++++
+                // +++++ PartialToken stuff
                 if (partialToken.position() == partialToken.capacity()) {
                     partialToken = extendBuffer(partialToken,256);
                 }
@@ -104,7 +104,7 @@ public class DelimiterWindow {
                 int delimiterSize = delimiter.delimiterBuffer.capacity();
                 ByteBuffer slice = windowBuffer.slice().limit(delimiterSize);
 
-                // +++++
+                // +++++ PartialToken stuff
                 Token token = completeToken(partialToken);
                 if (!token.isStub) {
                     tokens.add(token);
@@ -122,7 +122,7 @@ public class DelimiterWindow {
 
             if (windowBuffer.position() == 0 && windowBuffer.limit() == 0) {
                 // done
-                // +++++
+                // +++++ PartialToken stuff
                 Token token = completeToken(partialToken);
                 if (!token.isStub) {
                     tokens.add(token);
@@ -139,7 +139,7 @@ public class DelimiterWindow {
         return tokens;
     }
 
-    // +++++
+    // +++++ PartialToken stuff
     private Token completeToken(ByteBuffer partialToken) {
         Token token = new Token();
         if (partialToken.limit() != 0) {
@@ -164,12 +164,14 @@ public class DelimiterWindow {
         return rv;
     }
 
+    // +++++ PartialToken stuff
     private String debugBuffer(ByteBuffer buffer) {
         ByteBuffer bufferSlice = buffer.slice();
         byte[] bufferBytes = new byte[bufferSlice.remaining()];
         bufferSlice.get(bufferBytes);
         return new String(bufferBytes, StandardCharsets.UTF_8);
     }
+    // -----
 
     private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
         ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
