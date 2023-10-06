@@ -5,8 +5,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Delimiter {
+    public final boolean isStub;
+
     public final ByteBuffer delimiterBuffer;
+
+    Delimiter() {
+        this.isStub = true;
+        this.delimiterBuffer = ByteBuffer.allocate(0);
+    }
+
     Delimiter(String delimiter) {
+        this.isStub = false;
         byte[] bytes = delimiter.getBytes(StandardCharsets.UTF_8);
         this.delimiterBuffer = ByteBuffer.allocateDirect(bytes.length);
         this.delimiterBuffer.put(bytes);

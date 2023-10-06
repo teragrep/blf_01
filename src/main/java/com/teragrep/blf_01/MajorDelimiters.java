@@ -3,9 +3,9 @@ package com.teragrep.blf_01;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MajorDelimiters {
+public class MajorDelimiters implements Delimiters {
 
-    Set<Delimiter> delimiterSet;
+    private final Set<Delimiter> delimiterSet;
     MajorDelimiters() {
         this.delimiterSet = new HashSet<>();
 
@@ -49,5 +49,10 @@ public class MajorDelimiters {
         delimiterSet.add(new Delimiter("{"));
         delimiterSet.add(new Delimiter("\\"));
         delimiterSet.add(new Delimiter("}"));
+    }
+
+    @Override
+    public Set<Delimiter> getDelimiters() {
+        return delimiterSet;
     }
 }
