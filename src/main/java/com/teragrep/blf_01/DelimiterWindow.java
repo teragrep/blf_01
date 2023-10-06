@@ -77,7 +77,7 @@ public class DelimiterWindow {
     public LinkedList<Token> findBy(Stream stream) {
         LinkedList<Token> tokens = new LinkedList<>();
 
-        Token token = new Token();
+        ByteBuffer partialToken = ByteBuffer.allocateDirect(256);
         while (fillWindowBufferFrom(stream) || windowBuffer.position() != windowBuffer.limit()) {
             windowBuffer.flip();
 
@@ -92,24 +92,24 @@ public class DelimiterWindow {
                 // take one out (insert to token)
                 byte b = windowBuffer.get();
 
+                // +++++
+                if (partialToken.position() == partialToken.capacity()) {
+                    partialToken = extendBuffer(partialToken,256);
+                }
+                partialToken.put(b);
+                // -----
 
-                if (token.isStub) {
-                    token = new Token(b);
-                }
-                else {
-                    token.put(b);
-                }
 
             } else {
                 int delimiterSize = delimiter.delimiterBuffer.capacity();
                 ByteBuffer slice = windowBuffer.slice().limit(delimiterSize);
 
+                // +++++
+                Token token = completeToken(partialToken);
                 if (!token.isStub) {
                     tokens.add(token);
-                    token = new Token();
-                    //System.out.println(token);
-
                 }
+                // -----
 
                 // realToken
                 Token delimiterToken = new Token(slice);
@@ -122,10 +122,12 @@ public class DelimiterWindow {
 
             if (windowBuffer.position() == 0 && windowBuffer.limit() == 0) {
                 // done
+                // +++++
+                Token token = completeToken(partialToken);
                 if (!token.isStub) {
                     tokens.add(token);
-                    System.out.println(token);
                 }
+                // -----
                 break;
             }
             else {
@@ -136,6 +138,17 @@ public class DelimiterWindow {
 
         return tokens;
     }
+
+    // +++++
+    private Token completeToken(ByteBuffer partialToken) {
+        Token token = new Token();
+        if (partialToken.limit() != 0) {
+            token = new Token(partialToken.flip());
+            partialToken.clear();
+        }
+        return token;
+    }
+    // -----
 
     private boolean fillWindowBufferFrom(Stream stream) {
         boolean rv = false;
@@ -157,5 +170,14 @@ public class DelimiterWindow {
         bufferSlice.get(bufferBytes);
         return new String(bufferBytes, StandardCharsets.UTF_8);
     }
+
+    private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
+        ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
+        ByteBuffer originalBuffer = byteBuffer.slice();
+        originalBuffer.flip();
+        newBuffer.put(originalBuffer);
+        return newBuffer;
+    }
 }
+
 
