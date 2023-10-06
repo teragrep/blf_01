@@ -46,7 +46,9 @@
 
 package com.teragrep.blf_01;
 
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class Entanglement {
 
@@ -57,6 +59,23 @@ public class Entanglement {
     }
 
     public LinkedList<Token> entangle() {
-        return new LinkedList<>();
+        LinkedList<Token> subTokens = new LinkedList<>();
+
+        int tokenListSize = tokens.size();
+
+        System.out.println("tokenListSize> " + tokenListSize);
+
+        while (tokenListSize != 0) {
+            process(tokens.listIterator(tokenListSize));
+            tokenListSize--;
+        }
+
+        return subTokens;
+    }
+
+    private void process(ListIterator<Token> tokenListIterator) {
+        while (tokenListIterator.hasNext()) {
+            System.out.println("tokenee> " + tokenListIterator.next());
+        }
     }
 }

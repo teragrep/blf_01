@@ -82,7 +82,14 @@ public class DelimiterWindow {
             windowBuffer.flip();
 
             if (windowBuffer.limit() == 0) {
-                // full read, no more data in stream
+                // done
+                // +++++ PartialToken stuff
+                Token endToken = completeToken(partialToken);
+                if (!endToken.isStub) {
+                    //System.out.println("created endToken <[" + endToken + "]>");
+                    tokens.add(endToken);
+                }
+                // -----
                 break;
             }
             ForkJoinTask<Delimiter> delimiterForkJoinTask = new MatchTask(delimiters, windowBuffer);
@@ -121,21 +128,9 @@ public class DelimiterWindow {
                 windowBuffer.position(windowBuffer.position() + slice.limit());
             }
 
-            if (windowBuffer.position() == windowBuffer.limit()) {
-                // done
-                // +++++ PartialToken stuff
-                Token endToken = completeToken(partialToken);
-                if (!endToken.isStub) {
-                    //System.out.println("created endToken <[" + endToken + "]>");
-                    tokens.add(endToken);
-                }
-                // -----
-                break;
-            }
-            else {
-                // remove the read ones
-                windowBuffer.compact();
-            }
+            // remove the read ones
+            windowBuffer.compact();
+
         }
 
         return tokens;
