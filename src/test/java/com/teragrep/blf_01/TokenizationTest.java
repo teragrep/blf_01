@@ -71,9 +71,12 @@ public class TokenizationTest {
 
         LinkedList<Token> decoded = delimiterWindow.findBy(stream);
 
+        /*
         for (Token token : decoded) {
             System.out.println(token);
         }
+
+         */
 
         assertTrue(decoded.contains(new Token("test")));
         assertTrue(decoded.contains(new Token("%20")));
