@@ -45,5 +45,84 @@
  */
 package com.teragrep.blf_01;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 public class Token {
+
+    private ByteBuffer byteBuffer;
+
+    public final boolean isStub;
+
+    Token() {
+        this.isStub = true;
+        this.byteBuffer = ByteBuffer.allocate(0);
+    }
+
+    Token(byte b) {
+        this.byteBuffer = ByteBuffer.allocateDirect(256);
+        this.put(b);
+        this.isStub = false;
+    }
+
+    Token(ByteBuffer buffer) {
+        this.byteBuffer = ByteBuffer.allocateDirect(buffer.capacity());
+        this.byteBuffer.put(buffer);
+        this.isStub = false;
+    }
+
+    Token(String string) {
+        byte[] stringBytes = string.getBytes(StandardCharsets.UTF_8);
+        this.byteBuffer = ByteBuffer.allocateDirect(stringBytes.length);
+        this.byteBuffer.put(stringBytes);
+        this.isStub = false;
+    }
+
+    void put(byte b) {
+        if (byteBuffer.position() == byteBuffer.capacity()) {
+            extendBuffer(256);
+        }
+        byteBuffer.put(b);
+    }
+
+    private void extendBuffer(int size) {
+        ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
+        ByteBuffer originalBuffer = byteBuffer.slice();
+        originalBuffer.flip();
+        newBuffer.put(originalBuffer);
+        byteBuffer = newBuffer;
+    }
+
+    @Override
+    public String toString() {
+        return debugBuffer(byteBuffer);
+    }
+
+    private String debugBuffer(ByteBuffer buffer) {
+        ByteBuffer bufferSlice = buffer.duplicate().flip();
+        byte[] bufferBytes = new byte[bufferSlice.remaining()];
+        bufferSlice.get(bufferBytes);
+        return new String(bufferBytes, StandardCharsets.UTF_8);
+    }
+
+    byte[] toBytes() {
+        ByteBuffer bufferSlice = byteBuffer.duplicate().flip();
+        byte[] bufferBytes = new byte[bufferSlice.remaining()];
+        bufferSlice.get(bufferBytes);
+        return bufferBytes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return isStub == token.isStub && Objects.equals(byteBuffer, token.byteBuffer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(byteBuffer, isStub);
+    }
 }
