@@ -62,7 +62,7 @@ public class TokenizationTest {
 
     @Test
     public void splitterTest() {
-        DelimiterWindow delimiterWindow = new DelimiterWindow();
+        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
 
         String input = "test%20test,b.c--opr<xz-- ";
         //String input = "%20";
@@ -91,6 +91,27 @@ public class TokenizationTest {
         assertFalse(decoded.contains(new Token("xz--")));
         assertFalse(decoded.contains(new Token("test%")));
         assertFalse(decoded.contains(new Token("test,")));
+
+    }
+
+    @Test
+    public void splitterTest2() {
+        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
+
+        String input = "a,2";
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+        Stream stream = new Stream(bais);
+
+        LinkedList<Token> decoded = delimiterWindow.findBy(stream);
+
+
+        assertTrue(decoded.contains(new Token("a")));
+        assertTrue(decoded.contains(new Token(",")));
+        assertTrue(decoded.contains(new Token("2")));
+
+        assertFalse(decoded.contains(new Token("a,2")));
+        assertFalse(decoded.contains(new Token("a,")));
+        assertFalse(decoded.contains(new Token(",2")));
 
     }
 }

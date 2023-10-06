@@ -59,8 +59,8 @@ public class DelimiterWindow {
     private final ByteBuffer windowBuffer;
 
     private final ForkJoinPool forkJoinPool;
-    DelimiterWindow() {
-        this.delimiters = new MajorDelimiters();
+    DelimiterWindow(Delimiters delimiters) {
+        this.delimiters = delimiters;
 
         // create windowBuffer with size of longest delimiter
         int size = Integer.MIN_VALUE;
@@ -75,6 +75,7 @@ public class DelimiterWindow {
     }
 
     public LinkedList<Token> findBy(Stream stream) {
+        windowBuffer.clear();
         LinkedList<Token> tokens = new LinkedList<>();
 
         ByteBuffer partialToken = ByteBuffer.allocateDirect(256);
@@ -120,7 +121,7 @@ public class DelimiterWindow {
                 windowBuffer.position(windowBuffer.position() + slice.limit());
             }
 
-            if (windowBuffer.position() == 0 && windowBuffer.limit() == 0) {
+            if (windowBuffer.position() == windowBuffer.limit()) {
                 // done
                 // +++++ PartialToken stuff
                 Token token = completeToken(partialToken);
