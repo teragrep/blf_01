@@ -113,7 +113,7 @@ public class DelimiterWindow {
                 // -----
 
                 // realToken
-                Token delimiterToken = new Token(slice);
+                Token delimiterToken = new Token(slice, true);
                 //System.out.println("created delimiterToken <[" + delimiterToken + "]>");
                 tokens.add(delimiterToken);
 
@@ -145,7 +145,7 @@ public class DelimiterWindow {
     private Token completeToken(ByteBuffer partialToken) {
         Token token = new Token();
         if (partialToken.flip().limit() != 0) {
-            token = new Token(partialToken);
+            token = new Token(partialToken, false);
         }
         partialToken.clear();
         return token;

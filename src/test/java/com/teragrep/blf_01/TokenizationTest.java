@@ -83,17 +83,17 @@ public class TokenizationTest {
          */
         assertEquals(11, decoded.size());
 
-        assertEquals(new Token("test"), decoded.get(0));
-        assertEquals(new Token("%20"), decoded.get(1));
-        assertEquals(new Token("test"), decoded.get(2));
-        assertEquals(new Token(","), decoded.get(3));
-        assertEquals(new Token("b.c"), decoded.get(4));
-        assertEquals(new Token("--"), decoded.get(5));
-        assertEquals(new Token("opr"), decoded.get(6));
-        assertEquals(new Token("<"), decoded.get(7));
-        assertEquals(new Token("xz"), decoded.get(8));
-        assertEquals(new Token("--"), decoded.get(9));
-        assertEquals(new Token(" "), decoded.get(10));
+        assertEquals(new Token("test", false), decoded.get(0));
+        assertEquals(new Token("%20", true), decoded.get(1));
+        assertEquals(new Token("test", false), decoded.get(2));
+        assertEquals(new Token(",", true), decoded.get(3));
+        assertEquals(new Token("b.c", false), decoded.get(4));
+        assertEquals(new Token("--", true), decoded.get(5));
+        assertEquals(new Token("opr", false), decoded.get(6));
+        assertEquals(new Token("<", true), decoded.get(7));
+        assertEquals(new Token("xz", false), decoded.get(8));
+        assertEquals(new Token("--", true), decoded.get(9));
+        assertEquals(new Token(" ", true), decoded.get(10));
 
 
     }
@@ -114,9 +114,9 @@ public class TokenizationTest {
 
         assertEquals(3, decoded.size());
 
-        assertEquals(new Token("a"), decoded.get(0));
-        assertEquals(new Token(","), decoded.get(1));
-        assertEquals(new Token("2"), decoded.get(2));
+        assertEquals(new Token("a", false), decoded.get(0));
+        assertEquals(new Token(",", true), decoded.get(1));
+        assertEquals(new Token("2", false), decoded.get(2));
 
 
     }
@@ -137,9 +137,9 @@ public class TokenizationTest {
 
         assertEquals(3, decoded.size());
 
-        assertEquals(new Token(","), decoded.get(0));
-        assertEquals(new Token("x"), decoded.get(1));
-        assertEquals(new Token("|"), decoded.get(2));
+        assertEquals(new Token(",", true), decoded.get(0));
+        assertEquals(new Token("x", false), decoded.get(1));
+        assertEquals(new Token("|", true), decoded.get(2));
 
 
     }

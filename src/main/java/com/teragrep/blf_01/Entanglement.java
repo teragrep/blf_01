@@ -46,5 +46,17 @@
 
 package com.teragrep.blf_01;
 
+import java.util.LinkedList;
+
 public class Entanglement {
+
+    public final LinkedList<Token> tokens;
+
+    public Entanglement(LinkedList<Token> tokens) {
+        this.tokens = tokens;
+    }
+
+    public LinkedList<Token> entangle() {
+        return new LinkedList<>();
+    }
 }

@@ -56,25 +56,31 @@ public class Token {
 
     public final boolean isStub;
 
+    public final boolean isDelimiter;
+
     Token() {
         this.isStub = true;
         this.bytes = new byte[]{};
+        this.isDelimiter = false;
     }
 
-    Token(byte[] bytes) {
+    Token(byte[] bytes, boolean isDelimiter) {
         this.bytes = bytes;
         this.isStub = false;
+        this.isDelimiter = isDelimiter;
     }
 
-    Token(ByteBuffer buffer) {
+    Token(ByteBuffer buffer, boolean isDelimiter) {
         this.bytes = new byte[buffer.remaining()];
         buffer.get(this.bytes);
         this.isStub = false;
+        this.isDelimiter = isDelimiter;
     }
 
-    Token(String string) {
+    Token(String string, boolean isDelimiter) {
         this.bytes = string.getBytes(StandardCharsets.UTF_8);
         this.isStub = false;
+        this.isDelimiter = isDelimiter;
     }
 
 
@@ -88,12 +94,12 @@ public class Token {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Token token = (Token) o;
-        return isStub == token.isStub && Arrays.equals(bytes, token.bytes);
+        return isStub == token.isStub && isDelimiter == token.isDelimiter && Arrays.equals(bytes, token.bytes);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(isStub);
+        int result = Objects.hash(isStub, isDelimiter);
         result = 31 * result + Arrays.hashCode(bytes);
         return result;
     }
