@@ -46,6 +46,7 @@
 
 package com.teragrep.blf_01;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -55,8 +56,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenizationTest {
 
@@ -71,26 +71,30 @@ public class TokenizationTest {
 
         LinkedList<Token> decoded = delimiterWindow.findBy(stream);
 
+        for (Token token : decoded) {
+            Assertions.assertFalse(token.isStub);
+        }
+
         /*
         for (Token token : decoded) {
             System.out.println(token);
         }
 
          */
+        assertEquals(11, decoded.size());
 
-        assertTrue(decoded.contains(new Token("test")));
-        assertTrue(decoded.contains(new Token("%20")));
-        assertTrue(decoded.contains(new Token(",")));
-        assertTrue(decoded.contains(new Token("b.c")));
-        assertTrue(decoded.contains(new Token("--")));
-        assertTrue(decoded.contains(new Token("opr")));
-        assertTrue(decoded.contains(new Token("<")));
-        assertTrue(decoded.contains(new Token("xz")));
-        assertTrue(decoded.contains(new Token(" ")));
+        assertEquals(new Token("test"), decoded.get(0));
+        assertEquals(new Token("%20"), decoded.get(1));
+        assertEquals(new Token("test"), decoded.get(2));
+        assertEquals(new Token(","), decoded.get(3));
+        assertEquals(new Token("b.c"), decoded.get(4));
+        assertEquals(new Token("--"), decoded.get(5));
+        assertEquals(new Token("opr"), decoded.get(6));
+        assertEquals(new Token("<"), decoded.get(7));
+        assertEquals(new Token("xz"), decoded.get(8));
+        assertEquals(new Token("--"), decoded.get(9));
+        assertEquals(new Token(" "), decoded.get(10));
 
-        assertFalse(decoded.contains(new Token("xz--")));
-        assertFalse(decoded.contains(new Token("test%")));
-        assertFalse(decoded.contains(new Token("test,")));
 
     }
 
@@ -104,14 +108,39 @@ public class TokenizationTest {
 
         LinkedList<Token> decoded = delimiterWindow.findBy(stream);
 
+        for (Token token : decoded) {
+            Assertions.assertFalse(token.isStub);
+        }
 
-        assertTrue(decoded.contains(new Token("a")));
-        assertTrue(decoded.contains(new Token(",")));
-        assertTrue(decoded.contains(new Token("2")));
+        assertEquals(3, decoded.size());
 
-        assertFalse(decoded.contains(new Token("a,2")));
-        assertFalse(decoded.contains(new Token("a,")));
-        assertFalse(decoded.contains(new Token(",2")));
+        assertEquals(new Token("a"), decoded.get(0));
+        assertEquals(new Token(","), decoded.get(1));
+        assertEquals(new Token("2"), decoded.get(2));
+
+
+    }
+
+    @Test
+    public void splitterTest3() {
+        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
+
+        String input = ",x|";
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+        Stream stream = new Stream(bais);
+
+        LinkedList<Token> decoded = delimiterWindow.findBy(stream);
+
+        for (Token token : decoded) {
+            Assertions.assertFalse(token.isStub);
+        }
+
+        assertEquals(3, decoded.size());
+
+        assertEquals(new Token(","), decoded.get(0));
+        assertEquals(new Token("x"), decoded.get(1));
+        assertEquals(new Token("|"), decoded.get(2));
+
 
     }
 }

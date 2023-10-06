@@ -47,7 +47,6 @@
 package com.teragrep.blf_01;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -108,14 +107,15 @@ public class DelimiterWindow {
                 // +++++ PartialToken stuff
                 Token token = completeToken(partialToken);
                 if (!token.isStub) {
+                    //System.out.println("created token <[" + token + "]>");
                     tokens.add(token);
                 }
                 // -----
 
                 // realToken
                 Token delimiterToken = new Token(slice);
+                //System.out.println("created delimiterToken <[" + delimiterToken + "]>");
                 tokens.add(delimiterToken);
-                //System.out.println(delimiterToken);
 
 
                 windowBuffer.position(windowBuffer.position() + slice.limit());
@@ -124,9 +124,10 @@ public class DelimiterWindow {
             if (windowBuffer.position() == windowBuffer.limit()) {
                 // done
                 // +++++ PartialToken stuff
-                Token token = completeToken(partialToken);
-                if (!token.isStub) {
-                    tokens.add(token);
+                Token endToken = completeToken(partialToken);
+                if (!endToken.isStub) {
+                    //System.out.println("created endToken <[" + endToken + "]>");
+                    tokens.add(endToken);
                 }
                 // -----
                 break;
@@ -143,10 +144,10 @@ public class DelimiterWindow {
     // +++++ PartialToken stuff
     private Token completeToken(ByteBuffer partialToken) {
         Token token = new Token();
-        if (partialToken.limit() != 0) {
-            token = new Token(partialToken.flip());
-            partialToken.clear();
+        if (partialToken.flip().limit() != 0) {
+            token = new Token(partialToken);
         }
+        partialToken.clear();
         return token;
     }
     // -----
@@ -166,14 +167,6 @@ public class DelimiterWindow {
     }
 
     // +++++ PartialToken stuff
-    private String debugBuffer(ByteBuffer buffer) {
-        ByteBuffer bufferSlice = buffer.slice();
-        byte[] bufferBytes = new byte[bufferSlice.remaining()];
-        bufferSlice.get(bufferBytes);
-        return new String(bufferBytes, StandardCharsets.UTF_8);
-    }
-    // -----
-
     private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
         ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
         ByteBuffer originalBuffer = byteBuffer.slice();
@@ -181,6 +174,7 @@ public class DelimiterWindow {
         newBuffer.put(originalBuffer);
         return newBuffer;
     }
+    // -----
 }
 
 
