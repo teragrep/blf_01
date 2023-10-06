@@ -46,7 +46,6 @@
 
 package com.teragrep.blf_01;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -59,23 +58,34 @@ public class Entanglement {
     }
 
     public LinkedList<Token> entangle() {
-        LinkedList<Token> subTokens = new LinkedList<>();
+        //System.out.println("tokenListSize> " + tokenListSize);
+        return process(tokens);
 
-        int tokenListSize = tokens.size();
-
-        System.out.println("tokenListSize> " + tokenListSize);
-
-        while (tokenListSize != 0) {
-            process(tokens.listIterator(tokenListSize));
-            tokenListSize--;
-        }
-
-        return subTokens;
     }
 
-    private void process(ListIterator<Token> tokenListIterator) {
-        while (tokenListIterator.hasNext()) {
-            System.out.println("tokenee> " + tokenListIterator.next());
+    private LinkedList<Token> process(LinkedList<Token> tokenList) {
+        LinkedList<Token> resultTokens = new LinkedList<>();
+        for (int i = 0 ; i < tokenList.size(); i++ ) {
+            ListIterator<Token> tokenListIterator = tokenList.listIterator(i);
+            LinkedList<Token> subList = new LinkedList<>();
+            while (tokenListIterator.hasNext()) {
+                subList.add(tokenListIterator.next());
+            }
+            resultTokens.add(new Token(new ConcatenatedToken(subList).concatenate(), false));
+            resultTokens.add(processReduce(subList));
         }
+        return resultTokens;
+    }
+
+    private Token processReduce(LinkedList<Token> tokenList) {
+        LinkedList<Token> subList = new LinkedList<>();
+
+        for (int i = 1 ; i < tokenList.size() ; i++ ) {
+            ListIterator<Token> tokenListIterator = tokenList.listIterator(i);
+            while (tokenListIterator.hasPrevious()) {
+                subList.addFirst(tokenListIterator.previous());
+            }
+        }
+        return new Token(new ConcatenatedToken(subList).concatenate(), false);
     }
 }

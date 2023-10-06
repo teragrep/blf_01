@@ -48,6 +48,7 @@ package com.teragrep.blf_01;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class Token {
@@ -82,6 +83,8 @@ public class Token {
         this.isStub = false;
         this.isDelimiter = isDelimiter;
     }
+
+
 
 
     @Override
