@@ -17,8 +17,9 @@ public class TokenizationTest {
     public void splitterTest() {
         DelimiterWindow delimiterWindow = new DelimiterWindow();
 
-        String input = "test%20test,b.c--jkl<jl-- ";
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8))
+        String input = "test%20test,b.c--opr<xz-- ";
+        //String input = "%20";
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
         delimiterWindow.findBy(stream);
@@ -31,12 +32,12 @@ public class TokenizationTest {
         assertTrue(decoded.contains(","));
         assertTrue(decoded.contains("b.c"));
         assertTrue(decoded.contains("--"));
-        assertTrue(decoded.contains("jkl"));
+        assertTrue(decoded.contains("opr"));
         assertTrue(decoded.contains("<"));
-        assertTrue(decoded.contains("jl"));
+        assertTrue(decoded.contains("xz"));
         assertTrue(decoded.contains(" "));
 
-        assertFalse(decoded.contains("jl--"));
+        assertFalse(decoded.contains("xz--"));
         assertFalse(decoded.contains("test%"));
         assertFalse(decoded.contains("test,"));
         */
