@@ -49,7 +49,6 @@ package com.teragrep.blf_01;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
@@ -118,7 +117,7 @@ public class Entanglement {
                 throw new RuntimeException(e);
             }
             // -----
-            Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate(), false);
+            Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate());
             taskResultTokens.add(concatenated);
 
             return taskResultTokens;
@@ -161,7 +160,7 @@ public class Entanglement {
             while (backwardIterator.hasPrevious()) {
                 windowTokens.addFirst(backwardIterator.previous());
             }
-            return new Token(new ConcatenatedToken(windowTokens).concatenate(), false);
+            return new Token(new ConcatenatedToken(windowTokens).concatenate());
         }
     }
 }

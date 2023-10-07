@@ -47,7 +47,6 @@
 package com.teragrep.blf_01;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -70,32 +69,32 @@ public class EntanglementTest {
 
         Assertions.assertEquals(5, tokens.size());
 
-        Assertions.assertEquals(tokens.get(0), new Token("b", false));
-        Assertions.assertEquals(tokens.get(1), new Token(".", true));
-        Assertions.assertEquals(tokens.get(2), new Token("c", false));
-        Assertions.assertEquals(tokens.get(3), new Token(".", true));
-        Assertions.assertEquals(tokens.get(4), new Token("d", false));
+        Assertions.assertEquals(tokens.get(0), new Token("b"));
+        Assertions.assertEquals(tokens.get(1), new Token("."));
+        Assertions.assertEquals(tokens.get(2), new Token("c"));
+        Assertions.assertEquals(tokens.get(3), new Token("."));
+        Assertions.assertEquals(tokens.get(4), new Token("d"));
 
         Entanglement entanglement = new Entanglement(tokens);
         LinkedList<Token> subTokens = entanglement.entangle();
 
         Assertions.assertEquals(15, subTokens.size());
 
-        Assertions.assertTrue(subTokens.contains(new Token("b.c.d", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("b.c.", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("b.c", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("b.", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("b", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".c.d", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".c.", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".c", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("c.d", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("c.", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("c", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".d", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".", false)));
-        Assertions.assertTrue(subTokens.contains(new Token("d", false)));
+        Assertions.assertTrue(subTokens.contains(new Token("b.c.d")));
+        Assertions.assertTrue(subTokens.contains(new Token("b.c.")));
+        Assertions.assertTrue(subTokens.contains(new Token("b.c")));
+        Assertions.assertTrue(subTokens.contains(new Token("b.")));
+        Assertions.assertTrue(subTokens.contains(new Token("b")));
+        Assertions.assertTrue(subTokens.contains(new Token(".c.d")));
+        Assertions.assertTrue(subTokens.contains(new Token(".c.")));
+        Assertions.assertTrue(subTokens.contains(new Token(".c")));
+        Assertions.assertTrue(subTokens.contains(new Token(".")));
+        Assertions.assertTrue(subTokens.contains(new Token("c.d")));
+        Assertions.assertTrue(subTokens.contains(new Token("c.")));
+        Assertions.assertTrue(subTokens.contains(new Token("c")));
+        Assertions.assertTrue(subTokens.contains(new Token(".d")));
+        Assertions.assertTrue(subTokens.contains(new Token(".")));
+        Assertions.assertTrue(subTokens.contains(new Token("d")));
 
     }
 }

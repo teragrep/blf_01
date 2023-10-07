@@ -57,11 +57,11 @@ public class ConcatenatedTokenTest {
     @Test
     public void testConcatenation() {
         LinkedList<Token> tokenLinkedList = new LinkedList<>();
-        Token token1 = new Token("ab", false);
+        Token token1 = new Token("ab");
         tokenLinkedList.add(token1);
-        Token token2 = new Token(".", true);
+        Token token2 = new Token(".");
         tokenLinkedList.add(token2);
-        Token token3 = new Token("cd", false);
+        Token token3 = new Token("cd");
         tokenLinkedList.add(token3);
 
         ConcatenatedToken concatenatedToken = new ConcatenatedToken(tokenLinkedList);
