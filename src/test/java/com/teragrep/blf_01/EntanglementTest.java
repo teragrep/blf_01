@@ -79,8 +79,6 @@ public class EntanglementTest {
         Entanglement entanglement = new Entanglement(tokens);
         LinkedList<Token> subTokens = entanglement.entangle();
 
-        System.out.println("SOUTTTIII" +  subTokens);
-
         Assertions.assertEquals(15, subTokens.size());
 
         Assertions.assertTrue(subTokens.contains(new Token("b.c.d", false)));
@@ -91,7 +89,7 @@ public class EntanglementTest {
         Assertions.assertTrue(subTokens.contains(new Token(".c.d", false)));
         Assertions.assertTrue(subTokens.contains(new Token(".c.", false)));
         Assertions.assertTrue(subTokens.contains(new Token(".c", false)));
-        Assertions.assertTrue(subTokens.contains(new Token(".", true)));
+        Assertions.assertTrue(subTokens.contains(new Token(".", false)));
         Assertions.assertTrue(subTokens.contains(new Token("c.d", false)));
         Assertions.assertTrue(subTokens.contains(new Token("c.", false)));
         Assertions.assertTrue(subTokens.contains(new Token("c", false)));

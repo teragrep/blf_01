@@ -58,9 +58,48 @@ public class Entanglement {
     }
 
     public LinkedList<Token> entangle() {
-        //System.out.println("tokenListSize> " + tokenListSize);
-        return process(tokens);
+        LinkedList<Token> rv =  startWindowScan(tokens);
+        System.out.println("entangling> " + tokens + " results into " + rv);
+        return rv;
 
+    }
+
+    private LinkedList<Token> startWindowScan(LinkedList<Token> tokenList) {
+        LinkedList<Token> resultTokens = new LinkedList<>();
+        for (int i = 0 ; i < tokenList.size(); i++ ) {
+            ListIterator<Token> forwardIterator = tokenList.listIterator(i);
+            // +++++ task
+            LinkedList<Token> taskResultTokens = new LinkedList<>();
+            LinkedList<Token> windowTokens = new LinkedList<>();
+            while (forwardIterator.hasNext()) {
+                windowTokens.addLast(forwardIterator.next());
+            }
+            // +++++ subtask endWindowScan
+            taskResultTokens.addAll(endWindowScan(windowTokens));
+            // -----
+            Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate(), false);
+            taskResultTokens.add(concatenated);
+            // -----
+            resultTokens.addAll(taskResultTokens);
+        }
+        return resultTokens;
+    }
+
+    private LinkedList<Token> endWindowScan(LinkedList<Token> tokenList) {
+        LinkedList<Token> resultTokens = new LinkedList<>();
+        for (int i = tokenList.size() -1 ; i > 0; i-- ) {
+            ListIterator<Token> backwardIterator = tokenList.listIterator(i);
+            // +++++ task
+            LinkedList<Token> windowTokens = new LinkedList<>();
+            while(backwardIterator.hasPrevious()) {
+                windowTokens.addFirst(backwardIterator.previous());
+            }
+            Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate(), false);
+            // ----- task
+            resultTokens.add(concatenated);
+        }
+
+        return resultTokens;
     }
 
     private LinkedList<Token> process(LinkedList<Token> tokenList) {
