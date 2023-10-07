@@ -79,7 +79,8 @@ class MatchTask extends RecursiveTask<Delimiter> {
 
         MatchTask matchTask = new MatchTask();
         if (matchBuffer.limit() > 1) {
-            ByteBuffer subMatchBuffer = matchBuffer.slice().limit(matchBuffer.limit() - 1);
+            ByteBuffer sliceBuffer = matchBuffer.slice();
+            ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
             matchTask = new MatchTask(delimiters, subMatchBuffer);
             matchTask.fork();
         }

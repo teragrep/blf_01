@@ -109,7 +109,8 @@ public class TokenScan {
 
             } else {
                 int delimiterSize = delimiter.delimiterBuffer.capacity();
-                ByteBuffer slice = windowBuffer.slice().limit(delimiterSize);
+                ByteBuffer sliceBuffer = windowBuffer.slice();
+                ByteBuffer limitedBuffer = (ByteBuffer) sliceBuffer.limit(delimiterSize);
 
                 // +++++ PartialToken stuff
                 Token token = completeToken(partialToken);
@@ -120,12 +121,12 @@ public class TokenScan {
                 // -----
 
                 // realToken
-                Token delimiterToken = new Token(slice);
+                Token delimiterToken = new Token(limitedBuffer);
                 //System.out.println("created delimiterToken <[" + delimiterToken + "]>");
                 tokens.add(delimiterToken);
 
 
-                windowBuffer.position(windowBuffer.position() + slice.limit());
+                windowBuffer.position(windowBuffer.position() + limitedBuffer.limit());
             }
 
             // remove the read ones
