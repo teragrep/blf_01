@@ -72,6 +72,12 @@ public class Entanglement {
 
     }
 
+
+    /**
+     * Iterates Token list in forward order,
+     * starting from the largest subList and going to smaller ones
+     * and processes reverse order ones within
+     */
     private LinkedList<Token> startWindowScan(LinkedList<Token> tokenList) throws ExecutionException, InterruptedException {
         LinkedList<Token> resultTokens = new LinkedList<>();
 
@@ -124,6 +130,10 @@ public class Entanglement {
         }
     }
 
+    /**
+     * Iterates Token list in reverse order,
+     * starting from the largest subList and going to smaller ones
+     */
     private LinkedList<Token> endWindowScan(LinkedList<Token> tokenList) throws ExecutionException, InterruptedException {
         LinkedList<Token> resultTokens = new LinkedList<>();
 
