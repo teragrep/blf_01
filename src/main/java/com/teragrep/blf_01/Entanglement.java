@@ -101,30 +101,4 @@ public class Entanglement {
 
         return resultTokens;
     }
-
-    private LinkedList<Token> process(LinkedList<Token> tokenList) {
-        LinkedList<Token> resultTokens = new LinkedList<>();
-        for (int i = 0 ; i < tokenList.size(); i++ ) {
-            ListIterator<Token> tokenListIterator = tokenList.listIterator(i);
-            LinkedList<Token> subList = new LinkedList<>();
-            while (tokenListIterator.hasNext()) {
-                subList.add(tokenListIterator.next());
-            }
-            resultTokens.add(new Token(new ConcatenatedToken(subList).concatenate(), false));
-            resultTokens.add(processReduce(subList));
-        }
-        return resultTokens;
-    }
-
-    private Token processReduce(LinkedList<Token> tokenList) {
-        LinkedList<Token> subList = new LinkedList<>();
-
-        for (int i = 1 ; i < tokenList.size() ; i++ ) {
-            ListIterator<Token> tokenListIterator = tokenList.listIterator(i);
-            while (tokenListIterator.hasPrevious()) {
-                subList.addFirst(tokenListIterator.previous());
-            }
-        }
-        return new Token(new ConcatenatedToken(subList).concatenate(), false);
-    }
 }
