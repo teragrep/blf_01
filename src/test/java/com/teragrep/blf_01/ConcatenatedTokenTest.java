@@ -20,7 +20,7 @@ public class ConcatenatedTokenTest {
 
         ConcatenatedToken concatenatedToken = new ConcatenatedToken(tokenLinkedList);
 
-        byte[] expected = "a.b".getBytes(StandardCharsets.UTF_8);
+        byte[] expected = "ab.cd".getBytes(StandardCharsets.UTF_8);
         Assertions.assertArrayEquals(expected,concatenatedToken.concatenate());
     }
 }
