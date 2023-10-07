@@ -59,7 +59,7 @@ public class Entanglement {
 
     public LinkedList<Token> entangle() {
         LinkedList<Token> rv =  startWindowScan(tokens);
-        System.out.println("entangling> " + tokens + " results into " + rv);
+        //System.out.println("entangling> " + tokens + " results into " + rv);
         return rv;
 
     }
