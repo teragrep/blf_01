@@ -159,6 +159,8 @@
             <exclude>README.md</exclude>
             <!-- astyle -->
             <exclude>astyle-options.ini</exclude>
+            <!-- perf-test-asset -->
+            <exclude>src/test/resources/base64.txt</exclude>
           </excludes>
         </configuration>
       </plugin>
