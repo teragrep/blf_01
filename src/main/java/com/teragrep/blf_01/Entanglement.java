@@ -85,49 +85,23 @@ public class Entanglement {
         for (int i = 0; i < tokenList.size(); i++) {
             ListIterator<Token> forwardIterator = tokenList.listIterator(i);
             // +++++ task
-            subTasks.add(new StartScanTask(forwardIterator));
-            // -----
-        }
-
-        LinkedList<ForkJoinTask<LinkedList<Token>>> runningTasks = new LinkedList<>();
-        for (RecursiveTask<LinkedList<Token>> task : subTasks) {
-            runningTasks.add(task.fork());
-        }
-
-        for (ForkJoinTask<LinkedList<Token>> runningTask : runningTasks) {
-            resultTokens.addAll(runningTask.get());
-        }
-
-        return resultTokens;
-    }
-
-    private class StartScanTask extends RecursiveTask<LinkedList<Token>> {
-
-        private final ListIterator<Token> forwardIterator;
-
-        StartScanTask(ListIterator<Token> forwardIterator) {
-            this.forwardIterator = forwardIterator;
-        }
-
-        @Override
-        protected LinkedList<Token> compute() {
-            LinkedList<Token> taskResultTokens = new LinkedList<>();
             LinkedList<Token> windowTokens = new LinkedList<>();
             while (forwardIterator.hasNext()) {
                 windowTokens.addLast(forwardIterator.next());
             }
             // +++++ subtask endWindowScan
             try {
-                taskResultTokens.addAll(endWindowScan(windowTokens));
+                resultTokens.addAll(endWindowScan(windowTokens));
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
             // -----
             Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate());
-            taskResultTokens.add(concatenated);
-
-            return taskResultTokens;
+            resultTokens.add(concatenated);
+            // -----
         }
+
+        return resultTokens;
     }
 
     /**
@@ -137,40 +111,17 @@ public class Entanglement {
     private LinkedList<Token> endWindowScan(LinkedList<Token> tokenList) throws ExecutionException, InterruptedException {
         LinkedList<Token> resultTokens = new LinkedList<>();
 
-        LinkedList<RecursiveTask<Token>> subTasks = new LinkedList<>();
         for (int i = tokenList.size() - 1; i > 0; i--) {
             ListIterator<Token> backwardIterator = tokenList.listIterator(i);
             // +++++ task
-            subTasks.add(new EndScanTask(backwardIterator));
-            // ----- task
-        }
-
-        LinkedList<ForkJoinTask<Token>> runningTasks = new LinkedList<>();
-        for (RecursiveTask<Token> task : subTasks) {
-            runningTasks.add(task.fork());
-        }
-        for (ForkJoinTask<Token> runningTask : runningTasks) {
-            resultTokens.add(runningTask.get());
-        }
-
-        return resultTokens;
-    }
-
-    private class EndScanTask extends RecursiveTask<Token> {
-
-        private final ListIterator<Token> backwardIterator;
-
-        EndScanTask(ListIterator<Token> backwardIterator) {
-            this.backwardIterator = backwardIterator;
-        }
-
-        @Override
-        protected Token compute() {
             LinkedList<Token> windowTokens = new LinkedList<>();
             while (backwardIterator.hasPrevious()) {
                 windowTokens.addFirst(backwardIterator.previous());
             }
-            return new Token(new ConcatenatedToken(windowTokens).concatenate());
+            resultTokens.add(new Token(new ConcatenatedToken(windowTokens).concatenate()));
+            // ----- task
         }
+
+        return resultTokens;
     }
 }

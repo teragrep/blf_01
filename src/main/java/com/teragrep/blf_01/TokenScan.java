@@ -48,8 +48,6 @@ package com.teragrep.blf_01;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 
 public class TokenScan {
 
@@ -57,7 +55,6 @@ public class TokenScan {
 
     private final ByteBuffer windowBuffer;
 
-    private final ForkJoinPool forkJoinPool;
     TokenScan(Delimiters delimiters) {
         this.delimiters = delimiters;
 
@@ -70,7 +67,6 @@ public class TokenScan {
         }
 
         this.windowBuffer = ByteBuffer.allocateDirect(size);
-        this.forkJoinPool = ForkJoinPool.commonPool();
     }
 
     public LinkedList<Token> findBy(Stream stream) {
@@ -92,8 +88,8 @@ public class TokenScan {
                 // -----
                 break;
             }
-            ForkJoinTask<Delimiter> delimiterForkJoinTask = new MatchTask(delimiters, windowBuffer);
-            Delimiter delimiter = forkJoinPool.invoke(delimiterForkJoinTask);
+
+            Delimiter delimiter = match(delimiters, windowBuffer);
 
             if (delimiter.isStub) {
                 // take one out (insert to token)
@@ -171,6 +167,33 @@ public class TokenScan {
         return newBuffer;
     }
     // -----
+
+    Delimiter match(Delimiters delimiters, ByteBuffer matchBuffer) {
+        Delimiter rv = new Delimiter();
+
+        Delimiter sub = new Delimiter();
+        if (matchBuffer.limit() > 1) {
+            ByteBuffer sliceBuffer = matchBuffer.slice();
+            ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
+            sub = match(delimiters, subMatchBuffer);
+        }
+        for (Delimiter delimiter : delimiters.getDelimiters()) {
+            // debug
+
+            if (matchBuffer.equals(delimiter.delimiterBuffer)) {
+                // has match
+                rv = delimiter;
+            }
+        }
+
+        if (!sub.isStub) {
+            if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
+                rv = sub;
+            }
+        }
+
+        return rv;
+    }
 }
 
 

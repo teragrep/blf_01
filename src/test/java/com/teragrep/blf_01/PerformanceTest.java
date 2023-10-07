@@ -52,15 +52,11 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveTask;
 
 public class PerformanceTest {
 
     @Test
-    public void testAll() throws FileNotFoundException, ExecutionException, InterruptedException {
+    public void testAll() throws FileNotFoundException {
         TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
@@ -68,31 +64,9 @@ public class PerformanceTest {
 
         LinkedList<Token> majorTokens = majorTokenScan.findBy(stream);
 
-        LinkedList<Token> allTokens = new LinkedList<>();
-        allTokens.addAll(majorTokens);
+        LinkedList<Token> allTokens = new LinkedList<>(majorTokens);
 
-
-
-        LinkedList<ForkJoinTask<LinkedList<Token>>> forkJoinTasks = new LinkedList<>();
         for (Token token : majorTokens) {
-            forkJoinTasks.add(ForkJoinPool.commonPool().submit(new MinorTokenScanTask(token)));
-        }
-
-        for (ForkJoinTask<LinkedList<Token>> task : forkJoinTasks) {
-            allTokens.addAll(task.get());
-        }
-
-        System.out.println(allTokens.size());
-    }
-
-    private class MinorTokenScanTask extends RecursiveTask<LinkedList<Token>>{
-
-        public final Token token;
-        MinorTokenScanTask(Token token) {
-            this.token = token;
-        }
-        @Override
-        protected LinkedList<Token> compute() {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
             Stream tokenStream = new Stream(tokenBais);
@@ -103,7 +77,9 @@ public class PerformanceTest {
 
             Entanglement entanglement = new Entanglement(minorTokens);
 
-            return entanglement.entangle();
+            allTokens.addAll(entanglement.entangle());
         }
+
+        System.out.println(allTokens.size());
     }
 }
