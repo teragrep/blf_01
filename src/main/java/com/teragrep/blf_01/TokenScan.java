@@ -51,14 +51,14 @@ import java.util.LinkedList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
-public class DelimiterWindow {
+public class TokenScan {
 
     public final Delimiters delimiters;
 
     private final ByteBuffer windowBuffer;
 
     private final ForkJoinPool forkJoinPool;
-    DelimiterWindow(Delimiters delimiters) {
+    TokenScan(Delimiters delimiters) {
         this.delimiters = delimiters;
 
         // create windowBuffer with size of longest delimiter

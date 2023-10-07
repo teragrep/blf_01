@@ -63,9 +63,9 @@ public class EntanglementTest {
 
         Stream stream = new Stream(bais);
 
-        DelimiterWindow delimiterWindow = new DelimiterWindow(new MinorDelimiters());
+        TokenScan tokenScan = new TokenScan(new MinorDelimiters());
 
-        LinkedList<Token> tokens = delimiterWindow.findBy(stream);
+        LinkedList<Token> tokens = tokenScan.findBy(stream);
 
         Assertions.assertEquals(5, tokens.size());
 

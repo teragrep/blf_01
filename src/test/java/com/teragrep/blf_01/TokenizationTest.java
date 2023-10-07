@@ -59,14 +59,14 @@ public class TokenizationTest {
 
     @Test
     public void splitterTest() {
-        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
+        TokenScan tokenScan = new TokenScan(new MajorDelimiters());
 
         String input = "test%20test,b.c--opr<xz-- ";
         //String input = "%20";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = delimiterWindow.findBy(stream);
+        LinkedList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);
@@ -97,13 +97,13 @@ public class TokenizationTest {
 
     @Test
     public void splitterTest2() {
-        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
+        TokenScan tokenScan = new TokenScan(new MajorDelimiters());
 
         String input = "a,2";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = delimiterWindow.findBy(stream);
+        LinkedList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);
@@ -120,13 +120,13 @@ public class TokenizationTest {
 
     @Test
     public void splitterTest3() {
-        DelimiterWindow delimiterWindow = new DelimiterWindow(new MajorDelimiters());
+        TokenScan tokenScan = new TokenScan(new MajorDelimiters());
 
         String input = ",x|";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = delimiterWindow.findBy(stream);
+        LinkedList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);
