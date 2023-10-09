@@ -120,4 +120,37 @@ public class PerformanceTest {
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
     }
+
+    @Test
+    public void testSmall() {
+
+        Instant start = Instant.now();
+        String input = new String(new char[64]).replace("\0", "#");
+        TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
+
+        Stream stream = new Stream(new ByteArrayInputStream(input.getBytes()));
+
+        ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
+
+        ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
+
+        for (Token token : majorTokens) {
+            ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
+
+            Stream tokenStream = new Stream(tokenBais);
+
+            TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
+
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+
+            Entanglement entanglement = new Entanglement(minorTokens);
+
+            ArrayList<Token> tokenized = entanglement.entangle();
+            allTokens.addAll(tokenized);
+        }
+        Instant end = Instant.now();
+        float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
+        System.out.println("Time taken: " + duration + " seconds");
+        System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+    }
 }

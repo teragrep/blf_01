@@ -161,9 +161,8 @@ public class TokenScan {
     // +++++ PartialToken stuff
     private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
         ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
-        ByteBuffer originalBuffer = byteBuffer.slice();
-        originalBuffer.flip();
-        newBuffer.put(originalBuffer);
+        byteBuffer.flip();
+        newBuffer.put(byteBuffer);
         return newBuffer;
     }
     // -----
