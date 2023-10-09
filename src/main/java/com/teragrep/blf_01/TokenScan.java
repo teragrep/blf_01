@@ -96,7 +96,7 @@ public class TokenScan {
                 byte b = windowBuffer.get();
 
                 // +++++ PartialToken stuff
-                if (partialToken.position() == partialToken.capacity()) {
+                if (partialToken.limit() == partialToken.capacity()) {
                     partialToken = extendBuffer(partialToken,256);
                 }
                 partialToken.put(b);
@@ -161,9 +161,8 @@ public class TokenScan {
     // +++++ PartialToken stuff
     private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
         ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
-        ByteBuffer originalBuffer = byteBuffer.slice();
-        originalBuffer.flip();
-        newBuffer.put(originalBuffer);
+        byteBuffer.flip();
+        newBuffer.put(byteBuffer);
         return newBuffer;
     }
     // -----
