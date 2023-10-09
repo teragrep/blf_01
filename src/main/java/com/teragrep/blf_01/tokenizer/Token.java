@@ -72,10 +72,14 @@ public class Token {
         return majorToken;
     }
 
+    public String getMajorTokenString() {
+        return StandardCharsets.US_ASCII.decode(majorToken).toString();
+    }
+
     public Set<String> asStringSet() {
         collectPermutations();
 
-        Set<String> resultSet = new HashSet<>();
+        Set<String> resultSet = new HashSet<>(minorTokens.size());
 
         for(ByteBuffer bf: minorTokens) {
             String decoded = StandardCharsets.US_ASCII.decode(bf).toString();

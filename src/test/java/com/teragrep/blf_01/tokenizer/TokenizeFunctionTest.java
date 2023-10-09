@@ -62,9 +62,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class TokenizeFunctionTest {
 
     @Test
+    public void majorSplitterTest() {
+        String input = "n%20kl";
+        Set<String> decoded = getBytesDecoded(input);
+
+        System.out.println(decoded);
+    }
+    @Test
     public void splitterTest() {
         String input = "test%20test,b.c--jkl<jl-- ";
         Set<String> decoded = getBytesDecoded(input);
+
+        System.out.println(decoded);
 
         assertTrue(decoded.contains("test"));
         assertTrue(decoded.contains("%20"));
@@ -84,7 +93,7 @@ public class TokenizeFunctionTest {
 
     @Test
     public void tokenBenchmarkTest() {
-        int inputSize = 10000000;
+        int inputSize = 1000000;
         String input = generateRandomString(inputSize, 6);
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
         Stream stream = new Stream(bais);
@@ -93,7 +102,11 @@ public class TokenizeFunctionTest {
 
         long start = System.currentTimeMillis();
 
-        fn.apply(stream, buffer);
+        Set<Token> result = fn.apply(stream, buffer);
+
+        for (Token tkn: result) {
+            tkn.asStringSet();
+        }
 
         long end = System.currentTimeMillis();
 
@@ -128,7 +141,7 @@ public class TokenizeFunctionTest {
         Set<String> decoded = new HashSet<>();
 
         for (Token buf : result) {
-            decoded.addAll(buf.asStringSet());
+            decoded.add(buf.getMajorTokenString());
         }
         return decoded;
     }

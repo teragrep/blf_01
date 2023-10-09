@@ -54,8 +54,9 @@ import java.util.function.BiFunction;
 
 public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Token>> {
     private final Set<Token> tokens = new HashSet<>();
-    private final ByteArrayOutputStream multiTokenBuilder = new ByteArrayOutputStream();
-    private int splitterMark = 0;
+    private ByteArrayOutputStream multiBuffer = new ByteArrayOutputStream();
+    boolean countingMulti = false;
+
 
     @Override
     public Set<Token> apply(Stream stream, ByteBuffer buffer) {
@@ -71,46 +72,79 @@ public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Toke
 
         while (remaining > 0) {
 
-            buffer.put(b);
+            if (countingMulti) {
+                if (SplitterMatcher.multiMatch(multiBuffer.toByteArray())) {
+                    writeBufferAsToken(buffer,0);
+                    countingMulti = false;
+                    tokens.add(new Token(ByteBuffer.wrap(multiBuffer.toByteArray())));
+                    multiBuffer = new ByteArrayOutputStream();
+                }
+
+                else if (multiBuffer.size() < 5 && countingMulti) {
+                    multiBuffer.write(b);
+                } else {
+                    buffer.put(multiBuffer.toByteArray());
+                    countingMulti = false;
+                    multiBuffer = new ByteArrayOutputStream();
+
+                }
+            }
 
             // % or -
-            if (b == 37 || b == 45) {
-                checkOverlappingTokens(stream, b, buffer);
+            if (b == 37 || b == 45 && !countingMulti) {
+                countingMulti = true;
+                multiBuffer.write(b);
             }
 
-            // major splitter
-            if (SplitterMatcher.singleMatch(b)) {
+            if (SplitterMatcher.singleMatch(b) && !countingMulti) {
                 Token token = new Token(ByteBuffer.wrap(new byte[]{b}));
                 tokens.add(token);
-                addBytesFromSplitterMark(buffer, -1);
+                writeBufferAsToken(buffer, -1);
             }
 
-            if (!stream.next()) {
-                break;
+            if (!countingMulti) {
+                buffer.put(b);
             }
+
+            stream.next();
 
             b = stream.get();
             remaining--;
         }
 
-        // add final token from last splitter
-        addBytesFromSplitterMark(buffer, 0);
+        writeBufferAsToken(buffer, 0);
 
         return tokens;
     }
 
-    public void checkOverlappingTokens(Stream stream, byte b, ByteBuffer buffer) {
-        stream.mark();
-        multiTokenBuilder.write(b);
+    private void writeBufferAsToken(ByteBuffer buffer, int offset) {
+        buffer.flip();
 
+        if (buffer.limit() - buffer.position() + offset < 1) {
+            return;
+        }
+
+        byte[] data = new byte[buffer.limit()-buffer.position()+offset];
+
+
+        buffer.get(data, 0, buffer.limit() - buffer.position() + offset);
+        buffer.clear();
+        tokens.add(new Token(ByteBuffer.wrap(data)));
+
+    }
+
+    /*
+    public void checkOverlappingTokens(Stream stream, byte b, ByteBuffer buffer) {
+        // stream.mark();
+        multiTokenBuilder.write(b);
 
         for (int i = 1; i <= 5; i++) {
 
             if (SplitterMatcher.multiMatch(multiTokenBuilder.toByteArray())) {
                 addBytesFromSplitterMark(buffer, -1);
                 tokens.add(new Token(ByteBuffer.wrap(multiTokenBuilder.toByteArray())));
-                stream.reset();
-                stream.skip(i);
+                // stream.reset();
+                // stream.skip(i);
                 splitterMark = splitterMark+i-1;
                 break;
             }
@@ -125,24 +159,7 @@ public class TokenizeFunction implements BiFunction<Stream, ByteBuffer, Set<Toke
         }
 
         multiTokenBuilder.reset();
-        stream.reset();
+        // stream.reset();
     }
-
-    private void addBytesFromSplitterMark(ByteBuffer buffer, int offset) {
-        int gap = buffer.position() - splitterMark + offset;
-        if (gap < 0) {
-            return;
-        }
-
-        byte[] data = new byte[gap];
-
-        buffer.position(splitterMark);
-        buffer.get(data);
-
-        // TODO slow insert - 500ms on 10M string input length
-        Token token = new Token(ByteBuffer.wrap(data));
-        tokens.add(token);
-
-        splitterMark = buffer.position();
-    }
+     */
 }

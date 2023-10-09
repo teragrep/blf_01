@@ -59,7 +59,6 @@ public class Stream implements Supplier<Byte> {
     private int pointer = -1;
     private int bytesInBuffer = -1;
     private byte b;
-    private int mark;
 
     Stream(InputStream inputStream) {
         this.inputStream=inputStream;
@@ -69,24 +68,6 @@ public class Stream implements Supplier<Byte> {
         return b;
     }
 
-    public void mark() {
-        mark = pointer;
-    }
-
-    public int getMark() {
-        return mark;
-    }
-
-    public void reset() {
-        pointer = mark;
-    }
-
-    public void skip(int amount) {
-        if (amount < 1) {
-            return;
-        }
-        pointer = pointer + amount;
-    }
 
     boolean next() {
         if (pointer == bytesInBuffer) {

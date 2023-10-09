@@ -56,7 +56,7 @@ public class SplitterMatcher {
     private static final Set<ByteBuffer> multiSplitters =
             Arrays.stream(new String[]{"%0A", "%20", "%21", "%2520", "%2526", "%26", "%28", "%29", "%2B", "%2C", "%3A", "%3B", "%3D", "%5B", "%5D", "%7C", "--"})
             .map(str -> ByteBuffer.wrap(str.getBytes(StandardCharsets.US_ASCII))).collect(Collectors.toSet());
-    private static final Set<Byte> singleSplitters =
+    private static final Set<Byte> majorSplitters =
             Arrays.stream(new String[]{"\t","\n","\r"," ","!","\\","&","'","(",")","*","+",",",";","<",">","?","[","]","{","|","}"})
                     .map(str -> str.getBytes(StandardCharsets.US_ASCII)[0]).collect(Collectors.toSet());
 
@@ -65,7 +65,7 @@ public class SplitterMatcher {
                     .map(str -> str.getBytes(StandardCharsets.US_ASCII)[0]).collect(Collectors.toSet());
 
     public static boolean singleMatch(byte compared) {
-        return singleSplitters.contains(compared);
+        return majorSplitters.contains(compared);
     }
 
     public static boolean minorMatch(byte compared) {
