@@ -96,7 +96,7 @@ public class TokenScan {
                 byte b = windowBuffer.get();
 
                 // +++++ PartialToken stuff
-                if (partialToken.limit() == partialToken.capacity()) {
+                if (partialToken.position() == partialToken.capacity()) {
                     partialToken = extendBuffer(partialToken,256);
                 }
                 partialToken.put(b);
