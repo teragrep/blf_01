@@ -46,22 +46,20 @@
 
 package com.teragrep.blf_01;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveTask;
 
 public class Entanglement {
 
-    public final LinkedList<Token> tokens;
+    public final ArrayList<Token> tokens;
 
-    public Entanglement(LinkedList<Token> tokens) {
+    public Entanglement(ArrayList<Token> tokens) {
         this.tokens = tokens;
     }
 
-    public LinkedList<Token> entangle() {
-        LinkedList<Token> rv;
+    public ArrayList<Token> entangle() {
+        ArrayList<Token> rv;
         try {
             rv = startWindowScan(tokens);
         } catch (ExecutionException | InterruptedException e) {
@@ -78,16 +76,15 @@ public class Entanglement {
      * starting from the largest subList and going to smaller ones
      * and processes reverse order ones within
      */
-    private LinkedList<Token> startWindowScan(LinkedList<Token> tokenList) throws ExecutionException, InterruptedException {
-        LinkedList<Token> resultTokens = new LinkedList<>();
+    private ArrayList<Token> startWindowScan(ArrayList<Token> tokenList) throws ExecutionException, InterruptedException {
+        ArrayList<Token> resultTokens = new ArrayList<>();
 
-        LinkedList<RecursiveTask<LinkedList<Token>>> subTasks = new LinkedList<>();
         for (int i = 0; i < tokenList.size(); i++) {
             ListIterator<Token> forwardIterator = tokenList.listIterator(i);
             // +++++ task
-            LinkedList<Token> windowTokens = new LinkedList<>();
+            ArrayList<Token> windowTokens = new ArrayList<>();
             while (forwardIterator.hasNext()) {
-                windowTokens.addLast(forwardIterator.next());
+                windowTokens.add(forwardIterator.next());
             }
             // +++++ subtask endWindowScan
             try {
@@ -108,15 +105,15 @@ public class Entanglement {
      * Iterates Token list in reverse order,
      * starting from the largest subList and going to smaller ones
      */
-    private LinkedList<Token> endWindowScan(LinkedList<Token> tokenList) throws ExecutionException, InterruptedException {
-        LinkedList<Token> resultTokens = new LinkedList<>();
+    private ArrayList<Token> endWindowScan(ArrayList<Token> tokenList) throws ExecutionException, InterruptedException {
+        ArrayList<Token> resultTokens = new ArrayList<>();
 
         for (int i = tokenList.size() - 1; i > 0; i--) {
             ListIterator<Token> backwardIterator = tokenList.listIterator(i);
             // +++++ task
-            LinkedList<Token> windowTokens = new LinkedList<>();
+            ArrayList<Token> windowTokens = new ArrayList<>();
             while (backwardIterator.hasPrevious()) {
-                windowTokens.addFirst(backwardIterator.previous());
+                windowTokens.add(0, backwardIterator.previous());
             }
             resultTokens.add(new Token(new ConcatenatedToken(windowTokens).concatenate()));
             // ----- task

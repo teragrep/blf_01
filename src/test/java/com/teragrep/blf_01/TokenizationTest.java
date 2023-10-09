@@ -51,9 +51,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TokenizationTest {
 
@@ -66,7 +66,7 @@ public class TokenizationTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = tokenScan.findBy(stream);
+        ArrayList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);
@@ -103,7 +103,7 @@ public class TokenizationTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = tokenScan.findBy(stream);
+        ArrayList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);
@@ -126,7 +126,7 @@ public class TokenizationTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> decoded = tokenScan.findBy(stream);
+        ArrayList<Token> decoded = tokenScan.findBy(stream);
 
         for (Token token : decoded) {
             Assertions.assertFalse(token.isStub);

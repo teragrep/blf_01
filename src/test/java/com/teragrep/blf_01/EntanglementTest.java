@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class EntanglementTest {
 
@@ -65,7 +65,7 @@ public class EntanglementTest {
 
         TokenScan tokenScan = new TokenScan(new MinorDelimiters());
 
-        LinkedList<Token> tokens = tokenScan.findBy(stream);
+        ArrayList<Token> tokens = tokenScan.findBy(stream);
 
         Assertions.assertEquals(5, tokens.size());
 
@@ -76,7 +76,7 @@ public class EntanglementTest {
         Assertions.assertEquals(tokens.get(4), new Token("d"));
 
         Entanglement entanglement = new Entanglement(tokens);
-        LinkedList<Token> subTokens = entanglement.entangle();
+        ArrayList<Token> subTokens = entanglement.entangle();
 
         Assertions.assertEquals(15, subTokens.size());
 

@@ -50,21 +50,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class ConcatenatedTokenTest {
 
     @Test
     public void testConcatenation() {
-        LinkedList<Token> tokenLinkedList = new LinkedList<>();
+        ArrayList<Token> tokenList = new ArrayList<>();
         Token token1 = new Token("ab");
-        tokenLinkedList.add(token1);
+        tokenList.add(token1);
         Token token2 = new Token(".");
-        tokenLinkedList.add(token2);
+        tokenList.add(token2);
         Token token3 = new Token("cd");
-        tokenLinkedList.add(token3);
+        tokenList.add(token3);
 
-        ConcatenatedToken concatenatedToken = new ConcatenatedToken(tokenLinkedList);
+        ConcatenatedToken concatenatedToken = new ConcatenatedToken(tokenList);
 
         byte[] expected = "ab.cd".getBytes(StandardCharsets.UTF_8);
         Assertions.assertArrayEquals(expected,concatenatedToken.concatenate());
