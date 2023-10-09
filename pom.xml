@@ -161,6 +161,7 @@
             <exclude>astyle-options.ini</exclude>
             <!-- perf-test-asset -->
             <exclude>src/test/resources/base64.txt</exclude>
+            <exclude>src/test/resources/base64-8m.txt</exclude>
           </excludes>
         </configuration>
       </plugin>

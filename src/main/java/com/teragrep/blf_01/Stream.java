@@ -54,7 +54,7 @@ final class Stream implements Supplier<Byte> {
 
     private final InputStream inputStream;
 
-    private final byte[] buffer = new byte[256 * 1024];
+    private final byte[] buffer = new byte[8];
     private int pointer = -1;
     private int bytesInBuffer = -1;
     private byte b;
@@ -71,7 +71,7 @@ final class Stream implements Supplier<Byte> {
         if (pointer == bytesInBuffer) {
             int read;
             try {
-                read = inputStream.read(buffer, 0, buffer.length);
+                read = inputStream.read(buffer);
             } catch (IOException ioException) {
                 throw new UncheckedIOException(ioException);
             }

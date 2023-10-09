@@ -169,35 +169,33 @@ public class TokenScan {
     // -----
 
     Delimiter match(Delimiters delimiters, ByteBuffer matchBuffer) {
-        Delimiter rv = new Delimiter();
-
-
-        for (Delimiter delimiter : delimiters.getDelimiters()) {
-            // debug
-
-            if (matchBuffer.equals(delimiter.delimiterBuffer)) {
-                // has match
-                rv = delimiter;
-            }
-        }
+        Delimiter rv = getOrCreateDelimiter(delimiters, matchBuffer);
 
         if (rv.isStub) {
             // saerch smaller delimiter
             // TODO get delimiter by size
-            Delimiter sub = new Delimiter();
             if (matchBuffer.limit() > 1) {
                 ByteBuffer sliceBuffer = matchBuffer.slice();
                 ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
-                sub = match(delimiters, subMatchBuffer);
-            }
-            if (!sub.isStub) {
-                if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
-                    rv = sub;
+                Delimiter sub = match(delimiters, subMatchBuffer);
+                if (!sub.isStub) {
+                    if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
+                        rv = sub;
+                    }
                 }
             }
         }
 
         return rv;
+    }
+
+    Delimiter getOrCreateDelimiter(Delimiters delimiters, ByteBuffer matchBuffer) {
+        for (Delimiter delimiter : delimiters.getDelimiters()) {
+            if (matchBuffer.equals(delimiter.delimiterBuffer)) {
+                return delimiter;
+            }
+        }
+        return new Delimiter();
     }
 }
 

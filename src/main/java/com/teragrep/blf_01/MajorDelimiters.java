@@ -46,14 +46,13 @@
 
 package com.teragrep.blf_01;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MajorDelimiters implements Delimiters {
 
-    private final Set<Delimiter> delimiterSet;
+    private final ArrayList<Delimiter> delimiterSet;
     MajorDelimiters() {
-        this.delimiterSet = new HashSet<>();
+        this.delimiterSet = new ArrayList<>();
 
         delimiterSet.add(new Delimiter("\t"));
         delimiterSet.add(new Delimiter("\n"));
@@ -98,7 +97,7 @@ public class MajorDelimiters implements Delimiters {
     }
 
     @Override
-    public Set<Delimiter> getDelimiters() {
+    public ArrayList<Delimiter> getDelimiters() {
         return delimiterSet;
     }
 }

@@ -51,12 +51,16 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 
 public class PerformanceTest {
 
     @Test
     public void testAll() throws FileNotFoundException {
+
+        Instant start = Instant.now();
         TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
@@ -79,7 +83,41 @@ public class PerformanceTest {
 
             allTokens.addAll(entanglement.entangle());
         }
+        Instant end = Instant.now();
+        float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
+        System.out.println("Time taken: " + duration + " seconds");
+        System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+    }
 
-        System.out.println(allTokens.size());
+    @Test
+    public void testAllBig() throws FileNotFoundException {
+
+        Instant start = Instant.now();
+        TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
+
+        FileInputStream bais = new FileInputStream("src/test/resources/base64-8m.txt");
+        Stream stream = new Stream(bais);
+
+        LinkedList<Token> majorTokens = majorTokenScan.findBy(stream);
+
+        LinkedList<Token> allTokens = new LinkedList<>(majorTokens);
+
+        for (Token token : majorTokens) {
+            ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
+
+            Stream tokenStream = new Stream(tokenBais);
+
+            TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
+
+            LinkedList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+
+            Entanglement entanglement = new Entanglement(minorTokens);
+
+            allTokens.addAll(entanglement.entangle());
+        }
+        Instant end = Instant.now();
+        float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
+        System.out.println("Time taken: " + duration + " seconds");
+        System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
     }
 }
