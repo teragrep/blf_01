@@ -171,12 +171,7 @@ public class TokenScan {
     Delimiter match(Delimiters delimiters, ByteBuffer matchBuffer) {
         Delimiter rv = new Delimiter();
 
-        Delimiter sub = new Delimiter();
-        if (matchBuffer.limit() > 1) {
-            ByteBuffer sliceBuffer = matchBuffer.slice();
-            ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
-            sub = match(delimiters, subMatchBuffer);
-        }
+
         for (Delimiter delimiter : delimiters.getDelimiters()) {
             // debug
 
@@ -186,9 +181,19 @@ public class TokenScan {
             }
         }
 
-        if (!sub.isStub) {
-            if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
-                rv = sub;
+        if (rv.isStub) {
+            // saerch smaller delimiter
+            // TODO get delimiter by size
+            Delimiter sub = new Delimiter();
+            if (matchBuffer.limit() > 1) {
+                ByteBuffer sliceBuffer = matchBuffer.slice();
+                ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
+                sub = match(delimiters, subMatchBuffer);
+            }
+            if (!sub.isStub) {
+                if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
+                    rv = sub;
+                }
             }
         }
 
