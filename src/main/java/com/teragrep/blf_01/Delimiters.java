@@ -46,8 +46,8 @@
 
 package com.teragrep.blf_01;
 
-import java.util.Set;
+import java.util.ArrayList;
 
 public interface Delimiters {
-    Set<Delimiter> getDelimiters();
+    ArrayList<Delimiter> getDelimiters();
 }
