@@ -46,12 +46,12 @@
 
 package com.teragrep.blf_01;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class ConcatenatedToken {
 
-    LinkedList<Token> tokens;
-    public ConcatenatedToken(LinkedList<Token> tokens) {
+    ArrayList<Token> tokens;
+    public ConcatenatedToken(ArrayList<Token> tokens) {
         this.tokens = tokens;
     }
 

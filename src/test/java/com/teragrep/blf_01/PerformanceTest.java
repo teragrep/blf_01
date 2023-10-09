@@ -53,7 +53,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class PerformanceTest {
 
@@ -66,9 +66,9 @@ public class PerformanceTest {
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> majorTokens = majorTokenScan.findBy(stream);
+        ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
-        LinkedList<Token> allTokens = new LinkedList<>(majorTokens);
+        ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
 
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
@@ -77,7 +77,7 @@ public class PerformanceTest {
 
             TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
 
-            LinkedList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
 
             Entanglement entanglement = new Entanglement(minorTokens);
 
@@ -98,9 +98,9 @@ public class PerformanceTest {
         FileInputStream bais = new FileInputStream("src/test/resources/base64-8m.txt");
         Stream stream = new Stream(bais);
 
-        LinkedList<Token> majorTokens = majorTokenScan.findBy(stream);
+        ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
-        LinkedList<Token> allTokens = new LinkedList<>(majorTokens);
+        ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
 
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
@@ -109,7 +109,7 @@ public class PerformanceTest {
 
             TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
 
-            LinkedList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
 
             Entanglement entanglement = new Entanglement(minorTokens);
 

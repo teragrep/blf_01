@@ -47,7 +47,7 @@
 package com.teragrep.blf_01;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class TokenScan {
 
@@ -69,9 +69,9 @@ public class TokenScan {
         this.windowBuffer = ByteBuffer.allocateDirect(size);
     }
 
-    public LinkedList<Token> findBy(Stream stream) {
+    public ArrayList<Token> findBy(Stream stream) {
         windowBuffer.clear();
-        LinkedList<Token> tokens = new LinkedList<>();
+        ArrayList<Token> tokens = new ArrayList<>();
 
         ByteBuffer partialToken = ByteBuffer.allocateDirect(256);
         while (fillWindowBufferFrom(stream) || windowBuffer.position() != windowBuffer.limit()) {
