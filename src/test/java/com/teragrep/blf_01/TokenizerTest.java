@@ -46,16 +46,18 @@
 
 package com.teragrep.blf_01;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,7 +68,16 @@ public class TokenizerTest {
     public void testTokenization() {
         Tokenizer tokenizer = new Tokenizer();
         String input = "[20/Feb/2022:03.456]";
-        List<String> result = tokenizer.tokenize(input);
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+        List<byte[]> result = tokenizer.tokenize(bais);
+
+        List<String> decodedList = new ArrayList<>(result.size());
+
+        for(byte[] array : result) {
+            ByteBuffer buffer = ByteBuffer.wrap(array);
+            String decoded = StandardCharsets.UTF_8.decode(buffer).toString();
+            decodedList.add(decoded);
+        }
 
         List<String> expected =
                 Arrays.asList(
@@ -81,63 +92,23 @@ public class TokenizerTest {
                         ":03", "20", "Feb/2022:03.456", "/2022:03",".",":","/"
                 );
 
-        assertTrue(expected.containsAll(result));
+        assertTrue(decodedList.containsAll(expected));
 
     }
 
     @Test
     @Benchmark
-    @Disabled
     public void tokenizeFileInput() throws FileNotFoundException {
         Instant start = Instant.now();
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
         Tokenizer tokenizer = new Tokenizer();
-        List<String> rv = tokenizer.tokenize(bais);
+        List<byte[]> rv = tokenizer.tokenize(bais);
 
         Instant end = Instant.now();
         float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + rv.size() + " (" + rv.size()/duration + "/s)");
-
-    }
-
-    @Test
-    @Benchmark
-    @Disabled
-    public void tokenizeStringInput() {
-        String input = generateRandomString(1000000,20);
-
-        Instant start = Instant.now();
-
-        List<String> rv = new Tokenizer().tokenize(input);
-
-        System.out.println(rv.size());
-
-        Instant end = Instant.now();
-
-        float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
-
-        System.out.println("Time taken: " + duration + " seconds");
-
-        System.out.println("Tokens: " + rv.size() + " (" + rv.size()/duration + "/s)");
-
-    }
-
-    private String generateRandomString(int size, int splitterFreq) {
-        Random random = new Random();
-        String language = "123456789abcdefghijklmnopqrstuvwxyz#$%-./:=@_)";
-        String majorSplitters = ",;<>";
-        StringBuilder sb = new StringBuilder(size);
-        for (int i = 0; i <size; i++ ) {
-            if (i % splitterFreq == 0) {
-                sb.append(majorSplitters.charAt(random.nextInt(majorSplitters.length())));
-            } else {
-                sb.append(language.charAt(random.nextInt(language.length())));
-            }
-        }
-
-        return sb.toString();
 
     }
 }

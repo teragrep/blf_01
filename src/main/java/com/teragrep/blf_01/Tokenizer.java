@@ -48,7 +48,6 @@ package com.teragrep.blf_01;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,37 +74,14 @@ public class Tokenizer {
     }
 
     /**
-     * Tokenizes a string.
-     *
-     * @param input String that is tokenized
-     * @return String set of tokens from string
-     */
-    public List<String> tokenize(String input) {
-
-        final ByteArrayInputStream bais = new ByteArrayInputStream(
-                input.getBytes(StandardCharsets.US_ASCII)
-        );
-
-        stream.setInputStream(bais);
-
-        return getTokensAsStringSet(stream);
-
-    }
-
-    /**
      * tokenizes an input stream.
      *
      * @param is input stream that is tokenized
-     * @return String set of tokens from input stream
+     * @return List of tokens as byte arrays
      */
-    public List<String> tokenize(InputStream is) {
+    public List<byte[]> tokenize(InputStream is) {
 
         stream.setInputStream(is);
-        return getTokensAsStringSet(stream);
-
-    }
-
-    List<String> getTokensAsStringSet(Stream stream) {
 
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
@@ -123,7 +99,7 @@ public class Tokenizer {
             allTokens.addAll(entanglement.entangle(minorTokens));
         }
 
-        return allTokens.stream().map(Token::toString).collect(Collectors.toList());
+        return allTokens.stream().map(token -> token.bytes).collect(Collectors.toList());
 
     }
 }
