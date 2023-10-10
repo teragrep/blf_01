@@ -52,13 +52,12 @@ import org.openjdk.jmh.annotations.Benchmark;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,15 +68,7 @@ public class TokenizerTest {
         Tokenizer tokenizer = new Tokenizer();
         String input = "[20/Feb/2022:03.456]";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        List<byte[]> result = tokenizer.tokenize(bais);
-
-        List<String> decodedList = new ArrayList<>(result.size());
-
-        for(byte[] array : result) {
-            ByteBuffer buffer = ByteBuffer.wrap(array);
-            String decoded = StandardCharsets.UTF_8.decode(buffer).toString();
-            decodedList.add(decoded);
-        }
+        List<Token> result = tokenizer.tokenize(bais);
 
         List<String> expected =
                 Arrays.asList(
@@ -92,7 +83,10 @@ public class TokenizerTest {
                         ":03", "20", "Feb/2022:03.456", "/2022:03",".",":","/"
                 );
 
-        assertTrue(decodedList.containsAll(expected));
+        assertTrue(result.stream()
+                .map(Token::toString)
+                .collect(Collectors.toList())
+                .containsAll(expected));
 
     }
 
@@ -103,7 +97,7 @@ public class TokenizerTest {
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
         Tokenizer tokenizer = new Tokenizer();
-        List<byte[]> rv = tokenizer.tokenize(bais);
+        List<Token> rv = tokenizer.tokenize(bais);
 
         Instant end = Instant.now();
         float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;

@@ -50,7 +50,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class to access the tokenizer
@@ -74,12 +73,12 @@ public class Tokenizer {
     }
 
     /**
-     * tokenizes an input stream.
+     * Tokenizes an input stream.
      *
-     * @param is input stream that is tokenized
-     * @return List of tokens as byte arrays
+     * @param is {@link InputStream} that is tokenized
+     * @return List of {@link Token}(s)
      */
-    public List<byte[]> tokenize(InputStream is) {
+    public List<Token> tokenize(InputStream is) {
 
         stream.setInputStream(is);
 
@@ -99,7 +98,7 @@ public class Tokenizer {
             allTokens.addAll(entanglement.entangle(minorTokens));
         }
 
-        return allTokens.stream().map(token -> token.bytes).collect(Collectors.toList());
+        return allTokens;
 
     }
 }
