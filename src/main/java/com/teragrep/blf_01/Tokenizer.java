@@ -50,13 +50,29 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Class to access the tokenizer
  */
 public class Tokenizer {
+    final Stream stream;
+    final Entanglement entanglement;
+    final TokenScan majorTokenScan;
+    final TokenScan minorTokenScan;
+
+    public Tokenizer() {
+
+        final MajorDelimiters majorDelimiters = new MajorDelimiters();
+        final MinorDelimiters minorDelimiters = new MinorDelimiters();
+
+        this.stream = new Stream();
+        this.entanglement = new Entanglement();
+        this.majorTokenScan = new TokenScan(majorDelimiters);
+        this.minorTokenScan = new TokenScan(minorDelimiters);
+
+    }
 
     /**
      * Tokenizes a string.
@@ -64,13 +80,11 @@ public class Tokenizer {
      * @param input String that is tokenized
      * @return String set of tokens from string
      */
-    public Set<String> tokenize(String input) {
+    public List<String> tokenize(String input) {
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(
+        final ByteArrayInputStream bais = new ByteArrayInputStream(
                 input.getBytes(StandardCharsets.US_ASCII)
         );
-
-        final Stream stream = new Stream();
 
         stream.setInputStream(bais);
 
@@ -84,33 +98,22 @@ public class Tokenizer {
      * @param is input stream that is tokenized
      * @return String set of tokens from input stream
      */
-    public Set<String> tokenize(InputStream is) {
-
-        final Stream stream = new Stream();
+    public List<String> tokenize(InputStream is) {
 
         stream.setInputStream(is);
-
         return getTokensAsStringSet(stream);
 
     }
 
-    Set<String> getTokensAsStringSet(Stream stream) {
-
-        TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
+    List<String> getTokensAsStringSet(Stream stream) {
 
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
 
-        Delimiters minorDelimiters = new MinorDelimiters();
-
-        TokenScan minorTokenScan = new TokenScan(minorDelimiters);
-
-        Entanglement entanglement = new Entanglement();
-
         for (Token token : majorTokens) {
 
-            ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
+            final ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
             stream.setInputStream(tokenBais);
 
@@ -120,25 +123,7 @@ public class Tokenizer {
             allTokens.addAll(entanglement.entangle(minorTokens));
         }
 
-        return convertToStringSet(allTokens);
-
-    }
-
-    private Set<String> convertToStringSet(ArrayList<Token> tokenList) {
-        Set<String> rv;
-
-        // parallel stream when more than 10 000 tokens
-        if (tokenList.size() > 10000) {
-
-            rv = tokenList.parallelStream().map(Token::toString).collect(Collectors.toSet());
-
-        } else {
-
-            rv = tokenList.stream().map(Token::toString).collect(Collectors.toSet());
-
-        }
-
-        return rv;
+        return allTokens.stream().map(Token::toString).collect(Collectors.toList());
 
     }
 }
