@@ -46,31 +46,32 @@
 
 package com.teragrep.blf_01;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 public class MinorDelimiters implements Delimiters {
 
-    private final ArrayList<Delimiter> delimiterSet;
+    private final HashMap<ByteBuffer, Delimiter> delimiterSet;
 
     MinorDelimiters() {
-        this.delimiterSet = new ArrayList<>();
+        this.delimiterSet = new HashMap<>();
 
-        delimiterSet.add(new Delimiter("#"));
-        delimiterSet.add(new Delimiter("$"));
-        delimiterSet.add(new Delimiter("%"));
-        delimiterSet.add(new Delimiter("-"));
-        delimiterSet.add(new Delimiter("."));
-        delimiterSet.add(new Delimiter("/"));
-        delimiterSet.add(new Delimiter(":"));
-        delimiterSet.add(new Delimiter("="));
-        delimiterSet.add(new Delimiter("@"));
-        delimiterSet.add(new Delimiter("\\"));
-        delimiterSet.add(new Delimiter("_"));
+        delimiterSet.putAll(new Delimiter("#").asMap());
+        delimiterSet.putAll(new Delimiter("$").asMap());
+        delimiterSet.putAll(new Delimiter("%").asMap());
+        delimiterSet.putAll(new Delimiter("-").asMap());
+        delimiterSet.putAll(new Delimiter(".").asMap());
+        delimiterSet.putAll(new Delimiter("/").asMap());
+        delimiterSet.putAll(new Delimiter(":").asMap());
+        delimiterSet.putAll(new Delimiter("=").asMap());
+        delimiterSet.putAll(new Delimiter("@").asMap());
+        delimiterSet.putAll(new Delimiter("\\").asMap());
+        delimiterSet.putAll(new Delimiter("_").asMap());
 
     }
 
     @Override
-    public ArrayList<Delimiter> getDelimiters() {
+    public HashMap<ByteBuffer, Delimiter> getDelimiters() {
         return delimiterSet;
     }
 }

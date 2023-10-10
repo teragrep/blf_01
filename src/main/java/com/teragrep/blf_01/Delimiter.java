@@ -48,6 +48,7 @@ package com.teragrep.blf_01;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Delimiter {
@@ -79,5 +80,11 @@ public class Delimiter {
     @Override
     public int hashCode() {
         return Objects.hash(delimiterBuffer);
+    }
+
+    public HashMap<ByteBuffer, Delimiter> asMap() {
+        HashMap<ByteBuffer, Delimiter> map = new HashMap<>();
+        map.put(delimiterBuffer, this);
+        return map;
     }
 }
