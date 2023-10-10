@@ -60,7 +60,7 @@ public class ConcatenatedToken {
     byte[] concatenate(ArrayList<Token> tokens) {
         concatenatedBuffer.clear();
         for (Token token : tokens) {
-            if (concatenatedBuffer.position() == concatenatedBuffer.capacity()) {
+            if (concatenatedBuffer.position() + token.bytes.length >= concatenatedBuffer.capacity()) {
                 int size = 0;
                 for (Token tokenForSize : tokens) {
                     size = size + tokenForSize.bytes.length;
