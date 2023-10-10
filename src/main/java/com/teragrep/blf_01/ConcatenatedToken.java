@@ -54,7 +54,7 @@ public class ConcatenatedToken {
     private ByteBuffer concatenatedBuffer;
 
     public ConcatenatedToken() {
-        this.concatenatedBuffer = ByteBuffer.allocateDirect(256*1024); // FIXME: Allocate more dynamically
+        this.concatenatedBuffer = ByteBuffer.allocateDirect(256*1024);
     }
 
     byte[] concatenate(ArrayList<Token> tokens) {
