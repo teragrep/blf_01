@@ -64,9 +64,9 @@ public class ConcatenatedTokenTest {
         Token token3 = new Token("cd");
         tokenList.add(token3);
 
-        ConcatenatedToken concatenatedToken = new ConcatenatedToken(tokenList);
+        ConcatenatedToken concatenatedToken = new ConcatenatedToken();
 
         byte[] expected = "ab.cd".getBytes(StandardCharsets.UTF_8);
-        Assertions.assertArrayEquals(expected,concatenatedToken.concatenate());
+        Assertions.assertArrayEquals(expected,concatenatedToken.concatenate(tokenList));
     }
 }

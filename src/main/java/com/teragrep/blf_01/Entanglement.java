@@ -55,11 +55,13 @@ public class Entanglement {
     private final ArrayList<Token> allTokens;
     private final ArrayList<Token> forwardScanTokens;
     private final ArrayList<Token> backwardsScanTokens;
+    private final ConcatenatedToken concatenatedToken;
     public Entanglement() {
         this.endWindowScanTokens = new ArrayList<>(512);
         this.allTokens = new ArrayList<>(512);
         this.forwardScanTokens = new ArrayList<>(512);
         this.backwardsScanTokens = new ArrayList<>(512);
+        this.concatenatedToken = new ConcatenatedToken();
     }
 
     public ArrayList<Token> entangle(ArrayList<Token> tokens) {
@@ -86,7 +88,7 @@ public class Entanglement {
             // +++++ subtask endWindowScan
             allTokens.addAll(endWindowScan(forwardScanTokens));
             // -----
-            Token concatenated = new Token(new ConcatenatedToken(forwardScanTokens).concatenate());
+            Token concatenated = new Token(concatenatedToken.concatenate(forwardScanTokens));
             allTokens.add(concatenated);
             // -----
         }
@@ -108,7 +110,7 @@ public class Entanglement {
             while (backwardIterator.hasPrevious()) {
                 backwardsScanTokens.add(0, backwardIterator.previous());
             }
-            endWindowScanTokens.add(new Token(new ConcatenatedToken(backwardsScanTokens).concatenate()));
+            endWindowScanTokens.add(new Token(concatenatedToken.concatenate(backwardsScanTokens)));
             // ----- task
         }
 

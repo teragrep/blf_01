@@ -46,28 +46,40 @@
 
 package com.teragrep.blf_01;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ConcatenatedToken {
 
-    ArrayList<Token> tokens;
-    public ConcatenatedToken(ArrayList<Token> tokens) {
-        this.tokens = tokens;
+    private ByteBuffer concatenatedBuffer;
+
+    public ConcatenatedToken() {
+        this.concatenatedBuffer = ByteBuffer.allocateDirect(256*1024);
     }
 
-    byte[] concatenate() {
-        int size = 0;
+    byte[] concatenate(ArrayList<Token> tokens) {
+        concatenatedBuffer.clear();
         for (Token token : tokens) {
-            size = size + token.bytes.length;
+            if (concatenatedBuffer.position() + token.bytes.length >= concatenatedBuffer.capacity()) {
+                int size = 0;
+                for (Token tokenForSize : tokens) {
+                    size = size + tokenForSize.bytes.length;
+                }
+                concatenatedBuffer = extendBuffer(concatenatedBuffer, size);
+            }
+            concatenatedBuffer.put(token.bytes);
         }
-        byte[] bytes = new byte[size];
 
-        int pos = 0;
-        for (Token token : tokens) {
-            System.arraycopy(token.bytes, 0, bytes, pos, token.bytes.length);
-            pos = pos + token.bytes.length;
-        }
+        concatenatedBuffer.flip();
+        byte[] rv = new byte[concatenatedBuffer.remaining()];
+        concatenatedBuffer.get(rv);
+        return rv;
+    }
 
-        return bytes;
+    private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
+        ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
+        byteBuffer.flip();
+        newBuffer.put(byteBuffer);
+        return newBuffer;
     }
 }
