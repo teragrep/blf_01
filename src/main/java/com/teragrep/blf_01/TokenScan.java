@@ -55,8 +55,10 @@ public class TokenScan {
 
     private final ByteBuffer windowBuffer;
     private final Delimiter stubDelimiter;
+    private final ArrayList<Token> tokens;
+    private ByteBuffer partialToken;
 
-    TokenScan(Delimiters delimiters) {
+    public TokenScan(Delimiters delimiters) {
         this.delimiters = delimiters;
 
         // create windowBuffer with size of longest delimiter
@@ -69,13 +71,14 @@ public class TokenScan {
         }
         this.windowBuffer = ByteBuffer.allocateDirect(size);
         this.stubDelimiter = new Delimiter();
+        this.tokens = new ArrayList<>();
+        this.partialToken = ByteBuffer.allocateDirect(256);
     }
 
     public ArrayList<Token> findBy(Stream stream) {
         windowBuffer.clear();
-        ArrayList<Token> tokens = new ArrayList<>();
-
-        ByteBuffer partialToken = ByteBuffer.allocateDirect(256);
+        tokens.clear();
+        partialToken.clear();
         while (fillWindowBufferFrom(stream) || windowBuffer.position() != windowBuffer.limit()) {
             windowBuffer.flip();
 

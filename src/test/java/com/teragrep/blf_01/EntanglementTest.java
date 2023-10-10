@@ -61,7 +61,8 @@ public class EntanglementTest {
         String testString = "b.c.d";
         ByteArrayInputStream bais = new ByteArrayInputStream(testString.getBytes(StandardCharsets.UTF_8));
 
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         TokenScan tokenScan = new TokenScan(new MinorDelimiters());
 
@@ -75,8 +76,8 @@ public class EntanglementTest {
         Assertions.assertEquals(tokens.get(3), new Token("."));
         Assertions.assertEquals(tokens.get(4), new Token("d"));
 
-        Entanglement entanglement = new Entanglement(tokens);
-        ArrayList<Token> subTokens = entanglement.entangle();
+        Entanglement entanglement = new Entanglement();
+        ArrayList<Token> subTokens = entanglement.entangle(tokens);
 
         Assertions.assertEquals(15, subTokens.size());
 

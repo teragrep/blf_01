@@ -3,3 +3,5 @@
 .flattened-pom.xml
 .idea/**
 rlp_01.iml
+
+src/test/**/internal/

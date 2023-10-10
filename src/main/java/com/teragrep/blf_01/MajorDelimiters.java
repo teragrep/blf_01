@@ -52,7 +52,7 @@ import java.util.HashMap;
 public class MajorDelimiters implements Delimiters {
 
     private final HashMap<ByteBuffer, Delimiter> delimiterSet;
-    MajorDelimiters() {
+    public MajorDelimiters() {
         this.delimiterSet = new HashMap<>();
 
         delimiterSet.putAll(new Delimiter("\t").asMap());

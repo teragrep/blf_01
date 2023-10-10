@@ -50,16 +50,27 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.function.Supplier;
 
-final class Stream implements Supplier<Byte> {
+public final class Stream implements Supplier<Byte> {
 
-    private final InputStream inputStream;
+    private InputStream inputStream;
 
-    private final byte[] buffer = new byte[8];
+    private final byte[] buffer = new byte[256*1024];
     private int pointer = -1;
     private int bytesInBuffer = -1;
     private byte b;
 
-    Stream(InputStream inputStream) {
+    public Stream() {
+        this.inputStream = new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        };
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.pointer = -1;
+        this.bytesInBuffer = -1;
         this.inputStream = inputStream;
     }
 

@@ -64,7 +64,8 @@ public class TokenizationTest {
         String input = "test%20test,b.c--opr<xz-- ";
         //String input = "%20";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         ArrayList<Token> decoded = tokenScan.findBy(stream);
 
@@ -101,7 +102,8 @@ public class TokenizationTest {
 
         String input = "a,2";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         ArrayList<Token> decoded = tokenScan.findBy(stream);
 
@@ -124,7 +126,8 @@ public class TokenizationTest {
 
         String input = ",x|";
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         ArrayList<Token> decoded = tokenScan.findBy(stream);
 

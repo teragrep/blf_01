@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -58,99 +58,138 @@ import java.util.ArrayList;
 public class PerformanceTest {
 
     @Test
-    public void testAll() throws FileNotFoundException {
+    public void testAll() throws IOException {
 
         Instant start = Instant.now();
         TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64.txt");
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
         Delimiters minorDelimiters = new MinorDelimiters();
+
+        TokenScan minorTokenScan = new TokenScan(minorDelimiters);
+        Entanglement entanglement = new Entanglement();
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
-            Stream tokenStream = new Stream(tokenBais);
+            stream.setInputStream(tokenBais);
 
-            TokenScan minorTokenScan = new TokenScan(minorDelimiters);
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(stream);
 
-            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
 
-            Entanglement entanglement = new Entanglement(minorTokens);
-
-            allTokens.addAll(entanglement.entangle());
+            allTokens.addAll(entanglement.entangle(minorTokens));
         }
         Instant end = Instant.now();
         float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+        System.out.println("Data size: " + bais.getChannel().size() + " (" + bais.getChannel().size()/duration + "/s)");
     }
 
     @Test
-    public void testAllBig() throws FileNotFoundException {
+    public void testAllBig() throws IOException {
 
         Instant start = Instant.now();
         TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
 
         FileInputStream bais = new FileInputStream("src/test/resources/base64-8m.txt");
-        Stream stream = new Stream(bais);
+        Stream stream = new Stream();
+        stream.setInputStream(bais);
 
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
         Delimiters minorDelimiters = new MinorDelimiters();
+        TokenScan minorTokenScan = new TokenScan(minorDelimiters);
+        Entanglement entanglement = new Entanglement();
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
-            Stream tokenStream = new Stream(tokenBais);
+            stream.setInputStream(tokenBais);
 
-            TokenScan minorTokenScan = new TokenScan(minorDelimiters);
 
-            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(stream);
 
-            Entanglement entanglement = new Entanglement(minorTokens);
 
-            allTokens.addAll(entanglement.entangle());
+            allTokens.addAll(entanglement.entangle(minorTokens));
         }
         Instant end = Instant.now();
         float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+        System.out.println("Data size: " + bais.getChannel().size() + " (" + bais.getChannel().size()/duration + "/s)");
     }
 
     @Test
-    public void testSmall() {
+    public void testSmallDelimiters() {
 
         Instant start = Instant.now();
         String input = new String(new char[64]).replace("\0", "#");
         TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
 
-        Stream stream = new Stream(new ByteArrayInputStream(input.getBytes()));
+        Stream stream = new Stream();
+        stream.setInputStream(new ByteArrayInputStream(input.getBytes()));
 
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
+        Entanglement entanglement = new Entanglement();
 
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
-            Stream tokenStream = new Stream(tokenBais);
+            stream.setInputStream(tokenBais);
 
             TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
 
-            ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(stream);
 
-            Entanglement entanglement = new Entanglement(minorTokens);
 
-            ArrayList<Token> tokenized = entanglement.entangle();
+            ArrayList<Token> tokenized = entanglement.entangle(minorTokens);
             allTokens.addAll(tokenized);
         }
         Instant end = Instant.now();
         float duration = (float) ChronoUnit.MICROS.between(start, end)/1_000_000;
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+        System.out.println("Data size: " + input.length() + " (" + input.length()/duration + "/s)");
+    }
+
+    @Test
+    public void testSmallCharacters() {
+
+        String input = new String(new char[128*1024]).replace("\0", "X");
+        Instant start = Instant.now();
+        TokenScan majorTokenScan = new TokenScan(new MajorDelimiters());
+
+        Stream stream = new Stream();
+        stream.setInputStream(new ByteArrayInputStream(input.getBytes()));
+
+        ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
+
+        ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
+        Entanglement entanglement = new Entanglement();
+        for (Token token : majorTokens) {
+            ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
+
+            stream.setInputStream(tokenBais);
+
+            TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
+
+            ArrayList<Token> minorTokens = minorTokenScan.findBy(stream);
+
+            ArrayList<Token> tokenized = entanglement.entangle(minorTokens);
+            allTokens.addAll(tokenized);
+        }
+        Instant end = Instant.now();
+        float duration = (float) ChronoUnit.MICROS.between(start, end)/1_000_000;
+        System.out.println("Time taken: " + duration + " seconds");
+        System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
+        System.out.println("Data size: " + input.length() + " (" + input.length()/duration + "/s)");
     }
 }
