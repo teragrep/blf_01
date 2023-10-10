@@ -53,7 +53,7 @@ public class MinorDelimiters implements Delimiters {
 
     private final HashMap<ByteBuffer, Delimiter> delimiterSet;
 
-    MinorDelimiters() {
+    public MinorDelimiters() {
         this.delimiterSet = new HashMap<>();
 
         delimiterSet.putAll(new Delimiter("#").asMap());

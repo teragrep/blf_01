@@ -48,25 +48,23 @@ package com.teragrep.blf_01;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-import java.util.concurrent.ExecutionException;
 
 public class Entanglement {
 
-    public final ArrayList<Token> tokens;
-
-    public Entanglement(ArrayList<Token> tokens) {
-        this.tokens = tokens;
+    private final ArrayList<Token> endWindowScanTokens;
+    private final ArrayList<Token> allTokens;
+    private final ArrayList<Token> forwardScanTokens;
+    private final ArrayList<Token> backwardsScanTokens;
+    public Entanglement() {
+        this.endWindowScanTokens = new ArrayList<>(512);
+        this.allTokens = new ArrayList<>(512);
+        this.forwardScanTokens = new ArrayList<>(512);
+        this.backwardsScanTokens = new ArrayList<>(512);
     }
 
-    public ArrayList<Token> entangle() {
-        ArrayList<Token> rv;
-        try {
-            rv = startWindowScan(tokens);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public ArrayList<Token> entangle(ArrayList<Token> tokens) {
         //System.out.println("entangling> " + tokens + " results into " + rv);
-        return rv;
+        return startWindowScan(tokens);
 
     }
 
@@ -76,49 +74,44 @@ public class Entanglement {
      * starting from the largest subList and going to smaller ones
      * and processes reverse order ones within
      */
-    private ArrayList<Token> startWindowScan(ArrayList<Token> tokenList) throws ExecutionException, InterruptedException {
-        ArrayList<Token> resultTokens = new ArrayList<>();
-
+    private ArrayList<Token> startWindowScan(ArrayList<Token> tokenList)  {
+        allTokens.clear();
         for (int i = 0; i < tokenList.size(); i++) {
             ListIterator<Token> forwardIterator = tokenList.listIterator(i);
             // +++++ task
-            ArrayList<Token> windowTokens = new ArrayList<>();
+            forwardScanTokens.clear();
             while (forwardIterator.hasNext()) {
-                windowTokens.add(forwardIterator.next());
+                forwardScanTokens.add(forwardIterator.next());
             }
             // +++++ subtask endWindowScan
-            try {
-                resultTokens.addAll(endWindowScan(windowTokens));
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            allTokens.addAll(endWindowScan(forwardScanTokens));
             // -----
-            Token concatenated = new Token(new ConcatenatedToken(windowTokens).concatenate());
-            resultTokens.add(concatenated);
+            Token concatenated = new Token(new ConcatenatedToken(forwardScanTokens).concatenate());
+            allTokens.add(concatenated);
             // -----
         }
 
-        return resultTokens;
+        return allTokens;
     }
 
     /**
      * Iterates Token list in reverse order,
      * starting from the largest subList and going to smaller ones
      */
-    private ArrayList<Token> endWindowScan(ArrayList<Token> tokenList) throws ExecutionException, InterruptedException {
-        ArrayList<Token> resultTokens = new ArrayList<>();
+    private ArrayList<Token> endWindowScan(ArrayList<Token> tokenList) {
+        endWindowScanTokens.clear();
 
         for (int i = tokenList.size() - 1; i > 0; i--) {
             ListIterator<Token> backwardIterator = tokenList.listIterator(i);
             // +++++ task
-            ArrayList<Token> windowTokens = new ArrayList<>();
+            backwardsScanTokens.clear();
             while (backwardIterator.hasPrevious()) {
-                windowTokens.add(0, backwardIterator.previous());
+                backwardsScanTokens.add(0, backwardIterator.previous());
             }
-            resultTokens.add(new Token(new ConcatenatedToken(windowTokens).concatenate()));
+            endWindowScanTokens.add(new Token(new ConcatenatedToken(backwardsScanTokens).concatenate()));
             // ----- task
         }
 
-        return resultTokens;
+        return endWindowScanTokens;
     }
 }
