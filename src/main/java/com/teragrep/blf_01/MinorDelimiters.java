@@ -56,17 +56,17 @@ public class MinorDelimiters implements Delimiters {
     MinorDelimiters() {
         this.delimiterSet = new HashMap<>();
 
-        delimiterSet.put(new Delimiter("#").delimiterBuffer, new Delimiter("#"));
-        delimiterSet.put(new Delimiter("$").delimiterBuffer, new Delimiter("$"));
-        delimiterSet.put(new Delimiter("%").delimiterBuffer, new Delimiter("%"));
-        delimiterSet.put(new Delimiter("-").delimiterBuffer, new Delimiter("-"));
-        delimiterSet.put(new Delimiter(".").delimiterBuffer, new Delimiter("."));
-        delimiterSet.put(new Delimiter("/").delimiterBuffer, new Delimiter("/"));
-        delimiterSet.put(new Delimiter(":").delimiterBuffer, new Delimiter(":"));
-        delimiterSet.put(new Delimiter("=").delimiterBuffer, new Delimiter("="));
-        delimiterSet.put(new Delimiter("@").delimiterBuffer, new Delimiter("@"));
-        delimiterSet.put(new Delimiter("\\").delimiterBuffer, new Delimiter("\\"));
-        delimiterSet.put(new Delimiter("_").delimiterBuffer, new Delimiter("_"));
+        delimiterSet.putAll(new Delimiter("#").asMap());
+        delimiterSet.putAll(new Delimiter("$").asMap());
+        delimiterSet.putAll(new Delimiter("%").asMap());
+        delimiterSet.putAll(new Delimiter("-").asMap());
+        delimiterSet.putAll(new Delimiter(".").asMap());
+        delimiterSet.putAll(new Delimiter("/").asMap());
+        delimiterSet.putAll(new Delimiter(":").asMap());
+        delimiterSet.putAll(new Delimiter("=").asMap());
+        delimiterSet.putAll(new Delimiter("@").asMap());
+        delimiterSet.putAll(new Delimiter("\\").asMap());
+        delimiterSet.putAll(new Delimiter("_").asMap());
 
     }
 
