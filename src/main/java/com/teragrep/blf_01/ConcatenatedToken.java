@@ -46,28 +46,26 @@
 
 package com.teragrep.blf_01;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ConcatenatedToken {
 
-    ArrayList<Token> tokens;
-    public ConcatenatedToken(ArrayList<Token> tokens) {
-        this.tokens = tokens;
+    private final ByteBuffer concatenatedBuffer;
+
+    public ConcatenatedToken() {
+        this.concatenatedBuffer = ByteBuffer.allocateDirect(16*1024*1024); // FIXME: Allocate more dynamically
     }
 
-    byte[] concatenate() {
-        int size = 0;
+    byte[] concatenate(ArrayList<Token> tokens) {
+        concatenatedBuffer.clear();
         for (Token token : tokens) {
-            size = size + token.bytes.length;
-        }
-        byte[] bytes = new byte[size];
-
-        int pos = 0;
-        for (Token token : tokens) {
-            System.arraycopy(token.bytes, 0, bytes, pos, token.bytes.length);
-            pos = pos + token.bytes.length;
+            concatenatedBuffer.put(token.bytes);
         }
 
-        return bytes;
+        concatenatedBuffer.flip();
+        byte[] rv = new byte[concatenatedBuffer.remaining()];
+        concatenatedBuffer.get(rv);
+        return rv;
     }
 }
