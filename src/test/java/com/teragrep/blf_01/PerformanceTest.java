@@ -69,13 +69,13 @@ public class PerformanceTest {
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
-
+        Delimiters minorDelimiters = new MinorDelimiters();
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
             Stream tokenStream = new Stream(tokenBais);
 
-            TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
+            TokenScan minorTokenScan = new TokenScan(minorDelimiters);
 
             ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
 
@@ -101,13 +101,13 @@ public class PerformanceTest {
         ArrayList<Token> majorTokens = majorTokenScan.findBy(stream);
 
         ArrayList<Token> allTokens = new ArrayList<>(majorTokens);
-
+        Delimiters minorDelimiters = new MinorDelimiters();
         for (Token token : majorTokens) {
             ByteArrayInputStream tokenBais = new ByteArrayInputStream(token.bytes);
 
             Stream tokenStream = new Stream(tokenBais);
 
-            TokenScan minorTokenScan = new TokenScan(new MinorDelimiters());
+            TokenScan minorTokenScan = new TokenScan(minorDelimiters);
 
             ArrayList<Token> minorTokens = minorTokenScan.findBy(tokenStream);
 
@@ -149,7 +149,7 @@ public class PerformanceTest {
             allTokens.addAll(tokenized);
         }
         Instant end = Instant.now();
-        float duration = (float) ChronoUnit.MILLIS.between(start, end)/1000;
+        float duration = (float) ChronoUnit.MICROS.between(start, end)/1_000_000;
         System.out.println("Time taken: " + duration + " seconds");
         System.out.println("Tokens: " + allTokens.size() + " (" + allTokens.size()/duration + "/s)");
     }

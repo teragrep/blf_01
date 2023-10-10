@@ -54,19 +54,16 @@ public class TokenScan {
     public final Delimiters delimiters;
 
     private final ByteBuffer windowBuffer;
+    private final Delimiter stubDelimiter;
 
     TokenScan(Delimiters delimiters) {
         this.delimiters = delimiters;
 
         // create windowBuffer with size of longest delimiter
-        int size = Integer.MIN_VALUE;
-        for (Delimiter delimiter : delimiters.getDelimiters()) {
-            if (delimiter.delimiterBuffer.capacity() > size) {
-                size = delimiter.delimiterBuffer.capacity();
-            }
-        }
+        int size = 5; // FIXME
 
         this.windowBuffer = ByteBuffer.allocateDirect(size);
+        this.stubDelimiter = new Delimiter();
     }
 
     public ArrayList<Token> findBy(Stream stream) {
@@ -168,33 +165,17 @@ public class TokenScan {
     // -----
 
     Delimiter match(Delimiters delimiters, ByteBuffer matchBuffer) {
-        Delimiter rv = getOrCreateDelimiter(delimiters, matchBuffer);
-
+        Delimiter rv = delimiters.getDelimiters().getOrDefault(matchBuffer, this.stubDelimiter);
         if (rv.isStub) {
             // saerch smaller delimiter
-            // TODO get delimiter by size
             if (matchBuffer.limit() > 1) {
                 ByteBuffer sliceBuffer = matchBuffer.slice();
                 ByteBuffer subMatchBuffer = (ByteBuffer) sliceBuffer.limit(matchBuffer.limit() - 1);
-                Delimiter sub = match(delimiters, subMatchBuffer);
-                if (!sub.isStub) {
-                    if (sub.delimiterBuffer.capacity() > rv.delimiterBuffer.capacity()) {
-                        rv = sub;
-                    }
-                }
+                rv = match(delimiters, subMatchBuffer);
             }
         }
 
         return rv;
-    }
-
-    Delimiter getOrCreateDelimiter(Delimiters delimiters, ByteBuffer matchBuffer) {
-        for (Delimiter delimiter : delimiters.getDelimiters()) {
-            if (matchBuffer.equals(delimiter.delimiterBuffer)) {
-                return delimiter;
-            }
-        }
-        return new Delimiter();
     }
 }
 

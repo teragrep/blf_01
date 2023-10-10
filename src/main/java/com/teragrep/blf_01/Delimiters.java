@@ -46,8 +46,9 @@
 
 package com.teragrep.blf_01;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 public interface Delimiters {
-    ArrayList<Delimiter> getDelimiters();
+    HashMap<ByteBuffer, Delimiter> getDelimiters();
 }

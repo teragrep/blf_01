@@ -46,58 +46,59 @@
 
 package com.teragrep.blf_01;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class MajorDelimiters implements Delimiters {
 
-    private final ArrayList<Delimiter> delimiterSet;
+    private final HashMap<ByteBuffer, Delimiter> delimiterSet;
     MajorDelimiters() {
-        this.delimiterSet = new ArrayList<>();
+        this.delimiterSet = new HashMap<>();
 
-        delimiterSet.add(new Delimiter("\t"));
-        delimiterSet.add(new Delimiter("\n"));
-        delimiterSet.add(new Delimiter("\r"));
-        delimiterSet.add(new Delimiter(" "));
-        delimiterSet.add(new Delimiter("!"));
-        delimiterSet.add(new Delimiter("\""));
-        delimiterSet.add(new Delimiter("%0A"));
-        delimiterSet.add(new Delimiter("%20"));
-        delimiterSet.add(new Delimiter("%21"));
-        delimiterSet.add(new Delimiter("%2520"));
-        delimiterSet.add(new Delimiter("%2526"));
-        delimiterSet.add(new Delimiter("%26"));
-        delimiterSet.add(new Delimiter("%28"));
-        delimiterSet.add(new Delimiter("%29"));
-        delimiterSet.add(new Delimiter("%2B"));
-        delimiterSet.add(new Delimiter("%2C"));
-        delimiterSet.add(new Delimiter("%3A"));
-        delimiterSet.add(new Delimiter("%3B"));
-        delimiterSet.add(new Delimiter("%3D"));
-        delimiterSet.add(new Delimiter("%5B"));
-        delimiterSet.add(new Delimiter("%5D"));
-        delimiterSet.add(new Delimiter("%7C"));
-        delimiterSet.add(new Delimiter("&"));
-        delimiterSet.add(new Delimiter("'"));
-        delimiterSet.add(new Delimiter("|"));
-        delimiterSet.add(new Delimiter("("));
-        delimiterSet.add(new Delimiter(")"));
-        delimiterSet.add(new Delimiter("*"));
-        delimiterSet.add(new Delimiter("+"));
-        delimiterSet.add(new Delimiter(","));
-        delimiterSet.add(new Delimiter("--"));
-        delimiterSet.add(new Delimiter(";"));
-        delimiterSet.add(new Delimiter("<"));
-        delimiterSet.add(new Delimiter(">"));
-        delimiterSet.add(new Delimiter("?"));
-        delimiterSet.add(new Delimiter("["));
-        delimiterSet.add(new Delimiter("]"));
-        delimiterSet.add(new Delimiter("{"));
-        delimiterSet.add(new Delimiter("\\"));
-        delimiterSet.add(new Delimiter("}"));
+        delimiterSet.put(new Delimiter("\t").delimiterBuffer, new Delimiter("\t"));
+        delimiterSet.put(new Delimiter("\n").delimiterBuffer, new Delimiter("\n"));
+        delimiterSet.put(new Delimiter("\r").delimiterBuffer, new Delimiter("\r"));
+        delimiterSet.put(new Delimiter(" ").delimiterBuffer, new Delimiter(" "));
+        delimiterSet.put(new Delimiter("!").delimiterBuffer, new Delimiter("!"));
+        delimiterSet.put(new Delimiter("\"").delimiterBuffer, new Delimiter("\""));
+        delimiterSet.put(new Delimiter("%0A").delimiterBuffer, new Delimiter("%0A"));
+        delimiterSet.put(new Delimiter("%20").delimiterBuffer, new Delimiter("%20"));
+        delimiterSet.put(new Delimiter("%21").delimiterBuffer, new Delimiter("%21"));
+        delimiterSet.put(new Delimiter("%2520").delimiterBuffer, new Delimiter("%2520"));
+        delimiterSet.put(new Delimiter("%2526").delimiterBuffer, new Delimiter("%2526"));
+        delimiterSet.put(new Delimiter("%26").delimiterBuffer, new Delimiter("%26"));
+        delimiterSet.put(new Delimiter("%28").delimiterBuffer, new Delimiter("%28"));
+        delimiterSet.put(new Delimiter("%29").delimiterBuffer, new Delimiter("%29"));
+        delimiterSet.put(new Delimiter("%2B").delimiterBuffer, new Delimiter("%2B"));
+        delimiterSet.put(new Delimiter("%2C").delimiterBuffer, new Delimiter("%2C"));
+        delimiterSet.put(new Delimiter("%3A").delimiterBuffer, new Delimiter("%3A"));
+        delimiterSet.put(new Delimiter("%3B").delimiterBuffer, new Delimiter("%3B"));
+        delimiterSet.put(new Delimiter("%3D").delimiterBuffer, new Delimiter("%3D"));
+        delimiterSet.put(new Delimiter("%5B").delimiterBuffer, new Delimiter("%5B"));
+        delimiterSet.put(new Delimiter("%5D").delimiterBuffer, new Delimiter("%5D"));
+        delimiterSet.put(new Delimiter("%7C").delimiterBuffer, new Delimiter("%7C"));
+        delimiterSet.put(new Delimiter("&").delimiterBuffer, new Delimiter("&"));
+        delimiterSet.put(new Delimiter("'").delimiterBuffer, new Delimiter("'"));
+        delimiterSet.put(new Delimiter("|").delimiterBuffer, new Delimiter("|"));
+        delimiterSet.put(new Delimiter("(").delimiterBuffer, new Delimiter("("));
+        delimiterSet.put(new Delimiter(")").delimiterBuffer, new Delimiter(")"));
+        delimiterSet.put(new Delimiter("*").delimiterBuffer, new Delimiter("*"));
+        delimiterSet.put(new Delimiter("+").delimiterBuffer, new Delimiter("+"));
+        delimiterSet.put(new Delimiter(",").delimiterBuffer, new Delimiter(","));
+        delimiterSet.put(new Delimiter("--").delimiterBuffer, new Delimiter("--"));
+        delimiterSet.put(new Delimiter(";").delimiterBuffer, new Delimiter(";"));
+        delimiterSet.put(new Delimiter("<").delimiterBuffer, new Delimiter("<"));
+        delimiterSet.put(new Delimiter(">").delimiterBuffer, new Delimiter(">"));
+        delimiterSet.put(new Delimiter("?").delimiterBuffer, new Delimiter("?"));
+        delimiterSet.put(new Delimiter("[").delimiterBuffer, new Delimiter("["));
+        delimiterSet.put(new Delimiter("]").delimiterBuffer, new Delimiter("]"));
+        delimiterSet.put(new Delimiter("{").delimiterBuffer, new Delimiter("{"));
+        delimiterSet.put(new Delimiter("\\").delimiterBuffer, new Delimiter("\\"));
+        delimiterSet.put(new Delimiter("}").delimiterBuffer, new Delimiter("}"));
     }
 
     @Override
-    public ArrayList<Delimiter> getDelimiters() {
+    public HashMap<ByteBuffer, Delimiter> getDelimiters() {
         return delimiterSet;
     }
 }
