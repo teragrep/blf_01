@@ -60,8 +60,13 @@ public class TokenScan {
         this.delimiters = delimiters;
 
         // create windowBuffer with size of longest delimiter
-        int size = 5; // FIXME
 
+        int size = Integer.MIN_VALUE;
+        for(Delimiter delimiter : delimiters.getDelimiters().values()) {
+            if(delimiter.delimiterBuffer.capacity() > size) {
+                size = delimiter.delimiterBuffer.capacity();
+            }
+        }
         this.windowBuffer = ByteBuffer.allocateDirect(size);
         this.stubDelimiter = new Delimiter();
     }
