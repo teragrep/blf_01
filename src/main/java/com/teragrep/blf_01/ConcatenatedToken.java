@@ -51,15 +51,22 @@ import java.util.ArrayList;
 
 public class ConcatenatedToken {
 
-    private final ByteBuffer concatenatedBuffer;
+    private ByteBuffer concatenatedBuffer;
 
     public ConcatenatedToken() {
-        this.concatenatedBuffer = ByteBuffer.allocateDirect(16*1024*1024); // FIXME: Allocate more dynamically
+        this.concatenatedBuffer = ByteBuffer.allocateDirect(256*1024); // FIXME: Allocate more dynamically
     }
 
     byte[] concatenate(ArrayList<Token> tokens) {
         concatenatedBuffer.clear();
         for (Token token : tokens) {
+            if (concatenatedBuffer.position() == concatenatedBuffer.capacity()) {
+                int size = 0;
+                for (Token tokenForSize : tokens) {
+                    size = size + tokenForSize.bytes.length;
+                }
+                concatenatedBuffer = extendBuffer(concatenatedBuffer, size);
+            }
             concatenatedBuffer.put(token.bytes);
         }
 
@@ -67,5 +74,12 @@ public class ConcatenatedToken {
         byte[] rv = new byte[concatenatedBuffer.remaining()];
         concatenatedBuffer.get(rv);
         return rv;
+    }
+
+    private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
+        ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
+        byteBuffer.flip();
+        newBuffer.put(byteBuffer);
+        return newBuffer;
     }
 }
