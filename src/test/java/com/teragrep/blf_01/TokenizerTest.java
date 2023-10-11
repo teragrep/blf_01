@@ -90,6 +90,26 @@ public class TokenizerTest {
 
     }
 
+
+    @Test
+    public void testTokenizerSizeLimit() {
+        Tokenizer tokenizer = new Tokenizer(3);
+        String input = "Abc#####Xyz";
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+        List<Token> result = tokenizer.tokenize(bais);
+
+        List<String> expected =
+                Arrays.asList(
+                        "Abc#####Xyz", "Abc", "#", "#", "#", "#", "#", "Xyz"
+                );
+
+        assertTrue(result.stream()
+                .map(Token::toString)
+                .collect(Collectors.toList())
+                .containsAll(expected));
+
+    }
+
     @Test
     @Benchmark
     public void tokenizeFileInput() throws FileNotFoundException {

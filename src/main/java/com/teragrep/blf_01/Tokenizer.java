@@ -59,8 +59,12 @@ public class Tokenizer {
     final Entanglement entanglement;
     final TokenScan majorTokenScan;
     final TokenScan minorTokenScan;
+    final long maxTokenCount;
 
     public Tokenizer() {
+        this(Long.MAX_VALUE);
+    }
+    public Tokenizer(long maxTokenCount) {
 
         final MajorDelimiters majorDelimiters = new MajorDelimiters();
         final MinorDelimiters minorDelimiters = new MinorDelimiters();
@@ -69,7 +73,7 @@ public class Tokenizer {
         this.entanglement = new Entanglement();
         this.majorTokenScan = new TokenScan(majorDelimiters);
         this.minorTokenScan = new TokenScan(minorDelimiters);
-
+        this.maxTokenCount = maxTokenCount;
     }
 
     /**
@@ -94,8 +98,14 @@ public class Tokenizer {
 
             ArrayList<Token> minorTokens = minorTokenScan.findBy(stream);
 
+            ArrayList<Token> tokens;
+            if (minorTokens.size() > maxTokenCount) {
+                tokens = minorTokens;
+            } else {
+                tokens = entanglement.entangle(minorTokens);
+            }
 
-            allTokens.addAll(entanglement.entangle(minorTokens));
+            allTokens.addAll(tokens);
         }
 
         return allTokens;
