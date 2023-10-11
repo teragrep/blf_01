@@ -56,7 +56,7 @@ public class TokenScan {
     private final ByteBuffer windowBuffer;
     private final Delimiter stubDelimiter;
     private final ArrayList<Token> tokens;
-    private ByteBuffer partialToken;
+    private final PartialToken partialToken;
 
     public TokenScan(Delimiters delimiters) {
         this.delimiters = delimiters;
@@ -72,20 +72,20 @@ public class TokenScan {
         this.windowBuffer = ByteBuffer.allocateDirect(size);
         this.stubDelimiter = new Delimiter();
         this.tokens = new ArrayList<>();
-        this.partialToken = ByteBuffer.allocateDirect(256);
+        this.partialToken = new PartialToken();
     }
 
     public ArrayList<Token> findBy(Stream stream) {
         windowBuffer.clear();
         tokens.clear();
-        partialToken.clear();
+
         while (fillWindowBufferFrom(stream) || windowBuffer.position() != windowBuffer.limit()) {
             windowBuffer.flip();
 
             if (windowBuffer.limit() == 0) {
                 // done
                 // +++++ PartialToken stuff
-                Token endToken = completeToken(partialToken);
+                Token endToken = partialToken.completeToken();
                 if (!endToken.isStub) {
                     //System.out.println("created endToken <[" + endToken + "]>");
                     tokens.add(endToken);
@@ -99,13 +99,7 @@ public class TokenScan {
             if (delimiter.isStub) {
                 // take one out (insert to token)
                 byte b = windowBuffer.get();
-
-                // +++++ PartialToken stuff
-                if (partialToken.position() == partialToken.capacity()) {
-                    partialToken = extendBuffer(partialToken,256);
-                }
                 partialToken.put(b);
-                // -----
 
 
             } else {
@@ -114,7 +108,7 @@ public class TokenScan {
                 ByteBuffer limitedBuffer = (ByteBuffer) sliceBuffer.limit(delimiterSize);
 
                 // +++++ PartialToken stuff
-                Token token = completeToken(partialToken);
+                Token token = partialToken.completeToken();
                 if (!token.isStub) {
                     //System.out.println("created token <[" + token + "]>");
                     tokens.add(token);
@@ -138,16 +132,7 @@ public class TokenScan {
         return tokens;
     }
 
-    // +++++ PartialToken stuff
-    private Token completeToken(ByteBuffer partialToken) {
-        Token token = new Token();
-        if (partialToken.flip().limit() != 0) {
-            token = new Token(partialToken);
-        }
-        partialToken.clear();
-        return token;
-    }
-    // -----
+
 
     private boolean fillWindowBufferFrom(Stream stream) {
         boolean rv = false;
@@ -163,14 +148,7 @@ public class TokenScan {
         return rv;
     }
 
-    // +++++ PartialToken stuff
-    private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
-        ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
-        byteBuffer.flip();
-        newBuffer.put(byteBuffer);
-        return newBuffer;
-    }
-    // -----
+
 
     Delimiter match(Delimiters delimiters, ByteBuffer matchBuffer) {
         Delimiter rv = delimiters.getDelimiters().getOrDefault(matchBuffer, this.stubDelimiter);
