@@ -56,7 +56,6 @@ public class PartialToken {
         this.partialToken = ByteBuffer.allocateDirect(256);
     }
 
-    // +++++ PartialToken stuff
     Token completeToken() {
         Token token = new Token();
         if (partialToken.flip().limit() != 0) {
@@ -65,24 +64,19 @@ public class PartialToken {
         partialToken.clear();
         return token;
     }
-    // -----
 
-    // +++++ PartialToken stuff
     private ByteBuffer extendBuffer(ByteBuffer byteBuffer, int size) {
         ByteBuffer newBuffer = ByteBuffer.allocateDirect(byteBuffer.capacity() + size);
         byteBuffer.flip();
         newBuffer.put(byteBuffer);
         return newBuffer;
     }
-    // -----
 
 
     public void put(byte b) {
-        // +++++ PartialToken stuff
         if (partialToken.position() == partialToken.capacity()) {
             partialToken = extendBuffer(partialToken,256);
         }
         partialToken.put(b);
-        // -----
     }
 }
