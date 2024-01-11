@@ -1,0 +1,45 @@
+= BLF_01
+
+Tokenizer used to split extremely large inputs into major and minor tokens with pre-set delimiters (splitters)
+
+== Features
+
+* Fast tokenization of large inputs
+* Tokenization splits input into major and minor tokens
+* Permutations are generated from major tokens
+* Configurable delimiters for major and minor tokens (character or pattern)
+
+== Documentation
+
+See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
+
+== Limitations
+
+Uses Java version 1.8 other versions might not work correctly.
+
+Expects InputStream as input for tokenization.
+
+== How to [compile/use/implement]
+
+See tests for how to implement.
+
+Import the Tokenizer class.
+
+== Contributing
+
+You can involve yourself with our project by https://github.com/teragrep/blf_01/issues/new/choose[opening an issue] or submitting a pull request.
+
+Contribution requirements:
+
+. *All changes must be accompanied by a new or changed test.* If you think testing is not required in your pull request, include a sufficient explanation as why you think so.
+. Security checks must pass
+. Pull requests must align with the principles and http://www.extremeprogramming.org/values.html[values] of extreme programming.
+. Pull requests must follow the principles of Object Thinking and Elegant Objects (EO).
+
+Read more in our https://github.com/teragrep/teragrep/blob/main/contributing.adoc[Contributing Guideline].
+
+=== Contributor License Agreement
+
+Contributors must sign https://github.com/teragrep/teragrep/blob/main/cla.adoc[Teragrep Contributor License Agreement] before a pull request is accepted to organization's repositories.
+
+You need to submit the CLA only once. After submitting the CLA you can contribute to all Teragrep's repositories.
