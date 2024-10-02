@@ -162,6 +162,11 @@
             <!-- perf-test-asset -->
             <exclude>src/test/resources/base64.txt</exclude>
             <exclude>src/test/resources/base64-8m.txt</exclude>
+            <!-- github -->
+            <exclude>.github/ISSUE_TEMPLATE/feature_request.md</exclude>
+            <exclude>.github/ISSUE_TEMPLATE/bug_report.md</exclude>
+            <exclude>.github/ISSUE_TEMPLATE/tasks-and-meta.md</exclude>
+            <exclude>.github/ISSUE_TEMPLATE/config.yml</exclude>
           </excludes>
         </configuration>
       </plugin>
